@@ -1,12 +1,13 @@
-*indexedsearch.txt*  Show match count and index with search command
+*indexedsearch.txt*  Show match's count and index with search command
 
 Author:  Yakov Lerner
 
 INTRODUCTION                                    *indexedsearch*
 
 This plugin redefines 6 search commands (/,?,n,N,*,#). At every 
-search command, it automatically prints 
+search command, it automatically prints>
        "At match #N out of M matches". 
+>
 -- the total number of matches (M) and the number(index) of current 
 match (N). This helps to get oriented when searching forward and 
 backward. 
@@ -54,6 +55,6 @@ ABOUT
 
 This is a Pathogen(or Vundle) friendly format with help documentation on github:
 
-https://github.com/hulufei/vim-indexed-search
+https://github.com/henrik/vim-indexed-search
 
 see the plugin page at: http://www.vim.org/account/profile.php?user_id=2342
