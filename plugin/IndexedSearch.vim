@@ -5,16 +5,16 @@ let g:indexed_search_colors=0
 " Last change:  2006-11-21
 "
 " This script redefines 6 search commands (/,?,n,N,*,#). At each search,
-" it shows at which match number you are, and the total number 
+" it shows at which match number you are, and the total number
 " of matches, like this: "At Nth match out of M". This is printed
 " at the bottom line at every n,N,/,?,*,# search command, automatically.
 "
 " To try out the plugin, source it and play with N,n,*,#,/,? commands.
-" At the bottom line, you'll see wha it shows. There are no new 
+" At the bottom line, you'll see wha it shows. There are no new
 " commands and no new behavior to learn. Just additional info
 " on the bottom line, whenever you perform search.
 "
-" Works on vim6 and vim7. On very large files, won't cause slowdown 
+" Works on vim6 and vim7. On very large files, won't cause slowdown
 " because it checks the file size.
 " Don't use if you're sensitive to one of its components :-)
 "
@@ -22,11 +22,11 @@ let g:indexed_search_colors=0
 " -----------------------------------------------------
 " Checking Where You Are with respect to Search Matches
 " .....................................................
-" You can press \\ or \/ (that's backslach then slash), 
+" You can press \\ or \/ (that's backslach then slash),
 " or :ShowSearchIndex to show at which match index you are,
 " without moving cursor.
 "
-" If cursor is exactly on the match, the message is: 
+" If cursor is exactly on the match, the message is:
 "     At Nth match of M
 " If cursor is between matches, following messages are displayed:
 "     Betwen matches 189-190 of 300
@@ -73,6 +73,12 @@ if !exists("g:search_index_maxhit")
 endif
 " -------------- End of Performance tuning limits ------------------
 
+" -------------- Jump to the next result setting -------------------
+if !exists("g:indexed_search_keep_cursor_on_initial_result")
+  let g:indexed_search_keep_cursor_on_initial_result=0
+endif
+" ----------- End of Jump to the next result setting ---------------
+
 let s:save_cpo = &cpo
 set cpo&vim
 
@@ -88,7 +94,11 @@ command! ShowSearchIndex :call s:ShowCurrentSearchIndex(1,'')
 "                makes mappings longer.
 nnoremap <silent>n :let v:errmsg=''<cr>:silent! norm! n<cr>:call <SID>ShowCurrentSearchIndex(0,'!')<cr>
 nnoremap <silent>N :let v:errmsg=''<cr>:silent! norm! N<cr>:call <SID>ShowCurrentSearchIndex(0,'!')<cr>
-nnoremap <silent>* :let v:errmsg=''<cr>:silent! norm! *<cr>:call <SID>ShowCurrentSearchIndex(0,'!')<cr>
+if g:indexed_search_keep_cursor_on_initial_result
+  nnoremap <silent>* :let v:errmsg=''<cr>:silent! norm! *N<cr>:call <SID>ShowCurrentSearchIndex(0,'!')<cr>
+else
+  nnoremap <silent>* :let v:errmsg=''<cr>:silent! norm! *<cr>:call <SID>ShowCurrentSearchIndex(0,'!')<cr>
+endif
 nnoremap <silent># :let v:errmsg=''<cr>:silent! norm! #<cr>:call <SID>ShowCurrentSearchIndex(0,'!')<cr>
 
 
@@ -123,15 +133,15 @@ func! s:ScheduleEcho(msg,highlight)
 
     aug IndSearchEcho
 
-    au CursorHold * 
-      \ exe 'set ut='.g:IndSearchUT | 
-      \ if s:DelaySearchIndex | call s:ShowCurrentSearchIndex(0,'') | 
+    au CursorHold *
+      \ exe 'set ut='.g:IndSearchUT |
+      \ if s:DelaySearchIndex | call s:ShowCurrentSearchIndex(0,'') |
       \    let s:ScheduledEcho = s:Msg | let s:ScheduledHighlight = s:Highlight |
       \    let s:DelaySearchIndex = 0 | endif |
-      \ if s:ScheduledEcho != "" 
+      \ if s:ScheduledEcho != ""
       \ | exe "echohl ".s:ScheduledHighlight | echo s:ScheduledEcho | echohl None
-      \ | let s:ScheduledEcho='' | 
-      \ endif | 
+      \ | let s:ScheduledEcho='' |
+      \ endif |
       \ aug IndSearchEcho | exe 'au!' | aug END | aug! IndSearchEcho
     " how about moving contents of this au into function
 
@@ -192,7 +202,7 @@ func! s:CountCurrentSearchIndex(force, cmd)
             echomsg v:errmsg
             echohl None
         endif
-        
+
         if line('$') >= g:search_index_max
             " for large files, preserve original error messages and add nothing
             return ""
@@ -206,7 +216,7 @@ func! s:CountCurrentSearchIndex(force, cmd)
         return ""
     endif
     if @/ == '' | return "" | endif
-    if version >= 700 
+    if version >= 700
 		let save = winsaveview()
     endif
     let line = line('.')
@@ -233,7 +243,7 @@ func! s:CountCurrentSearchIndex(force, cmd)
 		exe "norm! ".vcol."|"
     endif
     if !a:force && num > g:search_index_maxhit
-        if exact >= 0 
+        if exact >= 0
             let too_slow=1 "  if too_slow, we'll want to switch the work over to CursorHold
             let num=">".(num-1)
         else
@@ -306,7 +316,7 @@ let &cpo = s:save_cpo
 
 " Last changes
 " 2006-10-20 added limitation by # of matches
-" 061021 lerner fixed problem with cmap <enter> that screwed maps 
+" 061021 lerner fixed problem with cmap <enter> that screwed maps
 " 061021 colors added
 " 061022 fixed g/ when too many matches
 " 061106 got message to work with check for largefile right
