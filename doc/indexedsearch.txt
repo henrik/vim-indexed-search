@@ -29,6 +29,7 @@ Checking At which Match Number You Are
 You can also press g/ or \\ or \/ (that's backslach then slash), it's the same
 as running :ShowSearchIndex, to show at which match index you are, without moving 
 the cursor. 
+To disable these mappings, set 'let g:indexed_search_show_index_mappings=0'
 
 Messages are: >
     At Nth match of M (if cursor is exactly on the match) 
