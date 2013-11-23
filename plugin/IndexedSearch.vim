@@ -102,9 +102,15 @@ endif
 nnoremap <silent># :let v:errmsg=''<cr>:silent! norm! #<cr>:call <SID>ShowCurrentSearchIndex(0,'!')<cr>
 
 
-nnoremap <silent>\/        :call <SID>ShowCurrentSearchIndex(1,'')<cr>
-nnoremap <silent>\\        :call <SID>ShowCurrentSearchIndex(1,'')<cr>
-nnoremap <silent>g/        :call <SID>ShowCurrentSearchIndex(1,'')<cr>
+if !exists("g:indexed_search_show_index_mappings")
+  let g:indexed_search_show_index_mappings=1
+endif
+
+if g:indexed_search_show_index_mappings
+  nnoremap <silent>\/        :call <SID>ShowCurrentSearchIndex(1,'')<cr>
+  nnoremap <silent>\\        :call <SID>ShowCurrentSearchIndex(1,'')<cr>
+  nnoremap <silent>g/        :call <SID>ShowCurrentSearchIndex(1,'')<cr>
+endif
 
 
 " before 061120,  I had cmapping for <cr> which was very intrusive. Didn't work
