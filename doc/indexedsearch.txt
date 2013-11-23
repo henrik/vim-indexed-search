@@ -26,7 +26,7 @@ COMMANDS                                        *:ShowSearchIndex*
 ----------------------------------------------------- 
 Checking At which Match Number You Are 
 ..................................................... 
-You can also press g/ or \\ or \/ (that's backslach then slash),it's the same
+You can also press g/ or \\ or \/ (that's backslach then slash), it's the same
 as running :ShowSearchIndex, to show at which match index you are, without moving 
 the cursor. 
 
