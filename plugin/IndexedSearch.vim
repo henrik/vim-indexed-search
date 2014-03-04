@@ -1,4 +1,3 @@
-let g:indexed_search_colors=0
 " File:         IndexedSearch.vim
 " Author:       Yakov Lerner <iler.ml@gmail.com>
 " URL:          http://www.vim.org/scripts/script.php?script_id=1682
