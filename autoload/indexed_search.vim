@@ -45,34 +45,25 @@ function! s:ScheduleEcho(msg,highlight)
 endfunction
 
 function! s:search(query, force)
-    if version >= 700
-        let save = winsaveview()
-    endif
-    let line = line('.')
-    let vcol = virtcol('.')
-    norm gg0
-    let num = 0    " total # of matches in the buffer
-    let exact = -1
-    let after = 0
-    let too_slow = 0 " if too_slow, we'll want to switch the work over to CursorHold
-    let s_opt = 'Wc'
-    while search(a:query s_opt) && (num <= g:search_index_maxhit  || a:force)
-        let num = num + 1
-        if line('.') == line && virtcol('.') == vcol
-            let exact = num
-        elseif line('.') < line || (line('.') == line && virtcol('.') < vcol)
-            let after = num
-        endif
-        let s_opt = 'W'
-    endwh
-    if version >= 700
-        call winrestview(save)
-    else
-        exe line
-        exe "norm! ".vcol."|"
-    endif
+    let winview = winsaveview()
+    let line = winview["lnum"]
+    let col = winview["col"] + 1
+    let [total, exact, after] = [0, -1, 0]
 
-    return [num, exact, after]
+    call cursor(1, 1)
+    let [matchline, matchcol] = searchpos(a:query, 'Wc')
+    while matchline && (total <= g:indexed_search_max_hits || a:force)
+        let total += 1
+        if (matchline == line && matchcol == col)
+            let exact = total
+        elseif matchline < line || (matchline == line && matchcol < col)
+            let after = total
+        endif
+        let [matchline, matchcol] = searchpos(a:query, 'W')
+    endwhile
+
+    call winrestview(winview)
+    return [total, exact, after]
 endfunction
 
 function! s:CountCurrentSearchIndex(force, cmd)
