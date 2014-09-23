@@ -50,40 +50,49 @@
 
 "if &cp | echo "warning: IndexedSearch.vim need nocp" | finish | endif " we need &nocp mode
 
-if exists("g:indexed_search_plugin") | finish | endif
-let g:indexed_search_plugin = 1
-
-if !exists('g:indexed_search_colors')
-    let g:indexed_search_colors=1 " 1-use colors for messages, 0-no colors
+if exists("g:loaded_indexed_search")
+    finish
 endif
-
-if !exists('g:indexed_search_shortmess')
-    let g:indexed_search_shortmess=0 " 1-longer messages; 0(or undefined)-longer messages.
-endif
-
-
-" ------------------ "Performance tuning limits" -------------------
-if !exists('g:search_index_max')
-  let g:search_index_max=30000 " max filesize(in lines) up to what
-                               " ShowCurrentSearchIndex() works
-endif
-if !exists("g:search_index_maxhit")
-  let g:search_index_maxhit=1000
-endif
-" -------------- End of Performance tuning limits ------------------
-
-" -------------- Jump to the next result setting -------------------
-if !exists("g:indexed_search_keep_cursor_on_initial_result")
-  let g:indexed_search_keep_cursor_on_initial_result=0
-endif
-" ----------- End of Jump to the next result setting ---------------
+let g:loaded_indexed_search = 1
 
 let s:save_cpo = &cpo
 set cpo&vim
 
 
-command! ShowSearchIndex :call s:ShowCurrentSearchIndex(1,'')
+"  Performance tuning limits
+if !exists('g:indexed_search_max_lines')
+    " Max filesize (in lines) up to where current_index() works
+    let g:indexed_search_max_lines = 30000
+endif
 
+if !exists("g:indexed_search_max_hits")
+    let g:indexed_search_max_hits = 1000
+endif
+
+" Appearance
+if !exists('g:indexed_search_colors')
+    " 1 or undefined - use colors for messages,
+    " 0              - no colors
+    let g:indexed_search_colors = 1
+endif
+
+if !exists('g:indexed_search_shortmess')
+    " 1              - shorter messages;
+    " 0 or undefined - longer messages.
+    let g:indexed_search_shortmess = 0
+endif
+
+" -------------- Jump to the next result setting -------------------
+if !exists("g:indexed_search_keep_cursor_on_initial_result")
+    let g:indexed_search_keep_cursor_on_initial_result = 0
+endif
+
+if !exists("g:indexed_search_show_index_mappings")
+    let g:indexed_search_show_index_mappings = 1
+endif
+
+
+command! ShowSearchIndex :call s:ShowCurrentSearchIndex(1,'')
 
 " before 061114  we had op invocation inside the function but this
 "                did not properly keep @/ and direction (func.return restores @/ and direction)
@@ -100,11 +109,6 @@ else
 endif
 nnoremap <silent># :let v:errmsg=''<cr>:silent! norm! #<cr>:call <SID>ShowCurrentSearchIndex(0,'!')<cr>
 
-
-if !exists("g:indexed_search_show_index_mappings")
-  let g:indexed_search_show_index_mappings=1
-endif
-
 if g:indexed_search_show_index_mappings
   nnoremap <silent>\/        :call <SID>ShowCurrentSearchIndex(1,'')<cr>
   nnoremap <silent>\\        :call <SID>ShowCurrentSearchIndex(1,'')<cr>
@@ -115,7 +119,6 @@ endif
 " before 061120,  I had cmapping for <cr> which was very intrusive. Didn't work
 "                 with supertab iInde<c-x><c-p>(resulted in something like recursive <c-r>=
 " after  061120,  I remap [/?] instead of remapping <cr>. Works in vim6, too
-
 nnoremap / :call <SID>DelaySearchIndex(0,'')<cr>/
 nnoremap ? :call <SID>DelaySearchIndex(0,'')<cr>?
 
@@ -361,7 +364,3 @@ let &cpo = s:save_cpo
 " - implement CursorHold bg counting to which too_slow will resort
 " - even on large files, we can show "At last match", "After last match"
 " - define global vars for all highlights, with defaults
-" hh
-" hh
-" hh
-" hh
