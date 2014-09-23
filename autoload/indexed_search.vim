@@ -110,7 +110,7 @@ function! s:index_message(total, a:exact, a:after, force)
     return [hl, msg."  /".@/."/"]
 endfunction
 
-function! s:CountCurrentSearchIndex(force, cmd)
+function! s:current_index(force, cmd)
     if @/ == '' || (!a:force && line('$') >= g:indexed_search_max_lines)
         let s:Msg = ''
         let s:Highlight = ''
