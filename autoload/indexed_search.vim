@@ -3,15 +3,17 @@ let s:DelaySearchIndex = 0
 let g:IndSearchUT = &ut
 
 
-function! s:MilliSince( start )
-    " usage: let s = reltime() | sleep 100m | let milli = MilliSince(s)
-    let x = reltimestr( reltime( a:start ) )
-    " there can be leading spaces in x
-    let sec   = substitute(x, '^ *\([0-9]\+\)', '\1', '')
-    let frac = substitute(x, '\.\([0-9]\+\)',  '\1', '') . "000"
-    let milli = strpart( frac, 0, 3)
-    return sec * 1000 + milli
-endfun
+function! s:milli_since(start)
+    " Use it like this:
+    "   :let s = reltime()
+    "   :sleep 100m
+    "   :let time_passed = s:milli_since(s)
+    " This would result in a Float which represents the milliseconds passed.
+
+    let rel_time = reltimestr(reltime(a:start))
+    let [sec, milli] = map(split(rel_time, '\ze\.'), 'str2float(v:val)')
+    return (sec + milli) * 1000
+endfunction
 
 
 func! s:ScheduleEcho(msg,highlight)
