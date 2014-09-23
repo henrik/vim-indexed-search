@@ -111,45 +111,14 @@ function! s:index_message(total, a:exact, a:after, force)
 endfunction
 
 function! s:CountCurrentSearchIndex(force, cmd)
-" sets globals -> s:Msg , s:Highlight
-    let s:Msg = '' | let s:Highlight = ''
-    let builtin_errmsg = ""
-
-    " echo "" | " make sure old msg is erased
-    if a:cmd == '!'
-        " if cmd is '!', we do not execute any command but report
-        " last errmsg
-        if v:errmsg != ""
-            echohl Error
-            echomsg v:errmsg
-            echohl None
-        endif
-    elseif a:cmd != ''
-        let v:errmsg = ""
-
-        silent! exe "norm! ".a:cmd
-
-        if v:errmsg != ""
-            echohl Error
-            echomsg v:errmsg
-            echohl None
-        endif
-
-        if line('$') >= g:search_index_max
-            " for large files, preserve original error messages and add nothing
-            return ""
-        endif
-    else
-    endif
-
-    if !a:force && line('$') >= g:search_index_max
-        let too_slow=1
-        " when too_slow, we'll want to switch the work over to CursorHold
+    if @/ == '' || (!a:force && line('$') >= g:indexed_search_max_lines)
+        let s:Msg = ''
+        let s:Highlight = ''
         return ""
     endif
-    if @/ == '' | return "" | endif
-    let [num, exact, after] = s:search(@/, a:force)
-    let [s:Highlight, s:Msg] s:index_message(num, exact, after)
+
+    let [total, exact, after] = s:search(@/, a:force)
+    let [s:Highlight, s:Msg] s:index_message(total, exact, after)
     return ""
 endfunction
 
