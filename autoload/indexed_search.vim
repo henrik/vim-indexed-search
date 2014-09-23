@@ -44,6 +44,37 @@ function! s:ScheduleEcho(msg,highlight)
     aug END
 endfunction
 
+function! s:search(query, force)
+    if version >= 700
+        let save = winsaveview()
+    endif
+    let line = line('.')
+    let vcol = virtcol('.')
+    norm gg0
+    let num = 0    " total # of matches in the buffer
+    let exact = -1
+    let after = 0
+    let too_slow = 0 " if too_slow, we'll want to switch the work over to CursorHold
+    let s_opt = 'Wc'
+    while search(a:query s_opt) && (num <= g:search_index_maxhit  || a:force)
+        let num = num + 1
+        if line('.') == line && virtcol('.') == vcol
+            let exact = num
+        elseif line('.') < line || (line('.') == line && virtcol('.') < vcol)
+            let after = num
+        endif
+        let s_opt = 'W'
+    endwh
+    if version >= 700
+        call winrestview(save)
+    else
+        exe line
+        exe "norm! ".vcol."|"
+    endif
+
+    return [num, exact, after]
+endfunction
+
 function! s:CountCurrentSearchIndex(force, cmd)
 " sets globals -> s:Msg , s:Highlight
     let s:Msg = '' | let s:Highlight = ''
@@ -82,32 +113,6 @@ function! s:CountCurrentSearchIndex(force, cmd)
         return ""
     endif
     if @/ == '' | return "" | endif
-    if version >= 700
-		let save = winsaveview()
-    endif
-    let line = line('.')
-    let vcol = virtcol('.')
-    norm gg0
-    let num = 0    " total # of matches in the buffer
-    let exact = -1
-    let after = 0
-    let too_slow = 0 " if too_slow, we'll want to switch the work over to CursorHold
-    let s_opt = 'Wc'
-    while search(@/, s_opt) && ( num <= g:search_index_maxhit  || a:force)
-        let num = num + 1
-        if line('.') == line && virtcol('.') == vcol
-            let exact = num
-        elseif line('.') < line || (line('.') == line && virtcol('.') < vcol)
-            let after = num
-        endif
-        let s_opt = 'W'
-    endwh
-    if version >= 700
-		call winrestview(save)
-	else
-		exe line
-		exe "norm! ".vcol."|"
-    endif
     if !a:force && num > g:search_index_maxhit
         if exact >= 0
             let too_slow=1 "  if too_slow, we'll want to switch the work over to CursorHold
@@ -121,7 +126,7 @@ function! s:CountCurrentSearchIndex(force, cmd)
         endif
     endif
 
-
+    let [num, exact, after] = s:search(@/, a:force)
 
     "           Messages Summary
     "
