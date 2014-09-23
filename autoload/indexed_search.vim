@@ -16,7 +16,7 @@ function! s:milli_since(start)
 endfunction
 
 
-func! s:ScheduleEcho(msg,highlight)
+function! s:ScheduleEcho(msg,highlight)
 
     "if &ut > 50 | let g:IndSearchUT=&ut | let &ut=50 | endif
     "if &ut > 100 | let g:IndSearchUT=&ut | let &ut=100 | endif
@@ -42,9 +42,9 @@ func! s:ScheduleEcho(msg,highlight)
     " how about moving contents of this au into function
 
     aug END
-endfun " s:ScheduleEcho
+endfunction
 
-func! s:CountCurrentSearchIndex(force, cmd)
+function! s:CountCurrentSearchIndex(force, cmd)
 " sets globals -> s:Msg , s:Highlight
     let s:Msg = '' | let s:Highlight = ''
     let builtin_errmsg = ""
@@ -176,15 +176,15 @@ func! s:CountCurrentSearchIndex(force, cmd)
     endif
     let s:Msg = prefix . "  /".@/ . "/"
     return ""
-endfunc
+endfunction
 
 
-func! indexed_search#DelaySearchIndex(force,cmd)
+function! indexed_search#DelaySearchIndex(force,cmd)
     let s:DelaySearchIndex = 1
     call s:ScheduleEcho('','')
-endfunc
+endfunction
 
-func! indexed_search#ShowCurrentSearchIndex(force, cmd)
+function! indexed_search#ShowCurrentSearchIndex(force, cmd)
     " NB: function saves and restores @/ and direction
     " this used to cause me many troubles
 
@@ -193,4 +193,4 @@ func! indexed_search#ShowCurrentSearchIndex(force, cmd)
     if s:Msg != ""
         call s:ScheduleEcho(s:Msg, s:Highlight )
     endif
-endfun
+endfunction
