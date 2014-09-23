@@ -15,6 +15,19 @@ function! s:milli_since(start)
     return (sec + milli) * 1000
 endfunction
 
+function! s:colored_echo(msg, hl)
+    execute "echohl ". a:hl
+    echo a:msg
+    echohl None
+endfunction
+
+function! s:destroy_augroup(group)
+    execute "augroup ". a:group
+        execute "autocmd!"
+    augroup END
+    execute "augroup! ". a:group
+endfunction
+
 
 function! s:ScheduleEcho(msg,highlight)
 
@@ -35,10 +48,10 @@ function! s:ScheduleEcho(msg,highlight)
       \    let s:ScheduledEcho = s:Msg | let s:ScheduledHighlight = s:Highlight |
       \    let s:DelaySearchIndex = 0 | endif |
       \ if s:ScheduledEcho != ""
-      \ | exe "echohl ".s:ScheduledHighlight | echo s:ScheduledEcho | echohl None
+      \ | call s:colored_echo(s:ScheduledEcho, s:ScheduledHighlight)
       \ | let s:ScheduledEcho='' |
       \ endif |
-      \ aug IndSearchEcho | exe 'au!' | aug END | aug! IndSearchEcho
+      \ call s:destroy_augroup('IndSearchEcho')
     " how about moving contents of this au into function
 
     aug END
