@@ -67,64 +67,47 @@ function! s:search(query, force)
 endfunction
 
 function! s:index_message(total, a:exact, a:after, force)
-    if !a:force && a:total > g:search_index_maxhit
-        if a:exact >= 0
-            let too_slow=1 "  if too_slow, we'll want to switch the work over to CursorHold
-            let a:total=">".(a:total-1)
-        else
-            let s:Msg = ">".(a:total-1)." matches"
-            if v:errmsg != ""
-                let s:Msg = ""  " avoid overwriting builtin errmsg with our ">1000 matches"
-            endif
-            return ""
-        endif
-    endif
+    let hl = "Directory"
+    let msg = ""
 
-    "           Messages Summary
-    "
-    " Short Message            Long Message
-    " -------------------------------------------
-    " %d of %d matches         Match %d of %d
-    " Last of %d matches       <-same
-    " First of %d matches      <-same
-    " No matchess              <-same
-    " -------------------------------------------
-    let s:Highlight = "Directory"
-    if a:total == "0"
-        let s:Highlight = "Error"
-        let prefix = "No matches "
-    elseif a:exact == 1 && a:total==1
-        " s:Highlight remains default
-        let prefix = "Single match"
-    elseif a:exact == 1
-        let s:Highlight = "Search"
-        let prefix = "First of " . a:total . " matches "
-    elseif a:exact == a:total
-        let s:Highlight = "LineNr"
-        let prefix = "Last of " . a:total . " matches "
-    elseif a:exact >= 0
-        if exists('g:indexed_search_shortmess') && g:indexed_search_shortmess
-            let prefix = a:exact." of " . a:total . " matches "
-        else
-            let prefix = "Match ".a:exact." of " . a:total
-        endif
-    elseif a:after == 0
-        let s:Highlight = "MoreMsg"
-        let prefix = "Before first match, of ".a:total." matches "
-        if a:total == 1
-            let prefix = "Before single match"
-        endif
-    elseif a:after == a:total
-        let s:Highlight = "WarningMsg"
-        let prefix = "a:after last match of ".a:total." matches "
-        if a:total == 1
-            let prefix = "a:after single match"
+    if !a:force && a:total > g:indexed_search_max_hits
+        let matches = "> ". g:indexed_search_max_hits
+        if a:exact < 0
+            return [hl, matches ." matches"]
         endif
     else
-        let prefix = "Between matches ".a:after."-".(a:after+1)." of ".a:total
+        let matches = a:total
     endif
-    let s:Msg = prefix . "  /".@/ . "/"
-    return ""
+    let shortmatch = matches . (g:indexed_search_shortmess ? "" : " matches")
+
+    if a:total == 0
+        let hl = "Error"
+        let msg = "No matches"
+    elseif a:exact == 1 && a:total == 1
+        " hl remains default
+        let msg = "Single match"
+    elseif a:exact == 1
+        let hl = "Search"
+        let msg = "First of ". shortmatch
+    elseif a:exact == a:total
+        let hl = "LineNr"
+        let msg = "Last of ". shortmatch
+    elseif a:exact >= 0
+        let msg = (g:indexed_search_shortmess ? "" : "Match ")
+                 \. a:exact ." of ". matches
+    elseif a:after == 0
+        let hl = "MoreMsg"
+        let msg = "Before first match, of ". shortmatch
+        if a:total == 1 | let msg = "Before single match" | endif
+    elseif a:after == a:total
+        let hl = "WarningMsg"
+        let msg = "After last match of ". shortmatch
+        if a:total == 1 | let msg = "After single match" | endif
+    else
+        let msg = "Between matches ". a:after ."-". (a:after+1) ." of ". matches
+    endif
+
+    return [hl, msg."  /".@/."/"]
 endfunction
 
 function! s:CountCurrentSearchIndex(force, cmd)
@@ -166,7 +149,8 @@ function! s:CountCurrentSearchIndex(force, cmd)
     endif
     if @/ == '' | return "" | endif
     let [num, exact, after] = s:search(@/, a:force)
-    return s:index_message(num, exact, after)
+    let [s:Highlight, s:Msg] s:index_message(num, exact, after)
+    return ""
 endfunction
 
 
