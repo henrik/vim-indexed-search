@@ -103,33 +103,34 @@ function! s:current_index(force, cmd)
     return s:index_message(total, exact, after, a:force)
 endfunction
 
-function! s:echo()
-    let [hl, msg] = s:current_index(0, '')
+function! s:echo(force)
+    let [hl, msg] = s:current_index(a:force)
     if msg != ''
         call s:colored_echo(msg, (g:indexed_search_colors ? hl : "None"))
     endif
 endfunction
 
-function! s:schedule_echo()
+function! s:schedule_echo(force)
     let s:save_ut = &ut
+    let s:force = a:force
 
     " 061116 &ut is sometimes not restored and drops permanently to 50. But how ?
-    if &ut > 200 | let &ut=200 | endif
+    if &ut > 200 | let &ut = 200 | endif
     augroup IndexedSearchAutoCmds
         autocmd CursorHold *
-        \ let &ut = s:save_ut     |
-        \ call s:echo()           |
-        \ call s:destroy_augroup('IndexedSearchAutoCmds')
+            \ let &ut = s:save_ut      |
+            \ call s:echo(s:force)     |
+            \ call s:destroy_augroup('IndexedSearchAutoCmds')
     augroup END
 endfunction
 
 
 function! indexed_search#DelaySearchIndex(force,cmd)
-    call s:schedule_echo()
+    call s:schedule_echo(a:force)
 endfunction
 
 function! indexed_search#ShowCurrentSearchIndex(force, cmd)
     " NB: function saves and restores @/ and direction
     " this used to cause me many troubles
-    call s:schedule_echo()
+    call s:schedule_echo(a:force)
 endfunction
