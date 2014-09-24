@@ -1,5 +1,4 @@
 let s:ScheduledEcho = ''
-let s:DelaySearchIndex = 0
 let g:IndSearchUT = &ut
 
 
@@ -107,29 +106,20 @@ function! s:current_index(force, cmd)
     return ""
 endfunction
 
-function! s:schedule_echo(msg,highlight)
+function! s:schedule_echo()
 
     "if &ut > 50 | let g:IndSearchUT=&ut | let &ut=50 | endif
     "if &ut > 100 | let g:IndSearchUT=&ut | let &ut=100 | endif
     if &ut > 200 | let g:IndSearchUT=&ut | let &ut=200 | endif
     " 061116 &ut is sometimes not restored and drops permanently to 50. But how ?
 
-    let s:ScheduledEcho      = a:msg
-    let use_colors = !exists('g:indexed_search_colors') || g:indexed_search_colors
-    let s:ScheduledHighlight = ( use_colors ? a:highlight : "None" )
-
     augroup IndSearchEcho
         autocmd CursorHold *
         \ exe 'set ut='.g:IndSearchUT                           |
-        \ if s:DelaySearchIndex                                 |
-        \     call indexed_search#ShowCurrentSearchIndex(0,'')  |
-        \     let s:ScheduledEcho = s:Msg                       |
-        \     let s:ScheduledHighlight = s:Highlight            |
-        \     let s:DelaySearchIndex = 0                        |
-        \ endif                                                 |
-        \ if s:ScheduledEcho != ""                              |
-        \     call s:colored_echo(s:ScheduledEcho, s:ScheduledHighlight)  |
-        \     let s:ScheduledEcho=''                            |
+        \ call s:current_index(0, '')                           |
+        \ if s:Msg != ""                                        |
+        \     call s:colored_echo(s:Msg, s:Highlight)           |
+        \     let s:Msg = ''                                    |
         \ endif                                                 |
         \ call s:destroy_augroup('IndSearchEcho')
         " how about moving contents of this au into function
@@ -138,17 +128,11 @@ endfunction
 
 
 function! indexed_search#DelaySearchIndex(force,cmd)
-    let s:DelaySearchIndex = 1
-    call s:schedule_echo('','')
+    call s:schedule_echo()
 endfunction
 
 function! indexed_search#ShowCurrentSearchIndex(force, cmd)
     " NB: function saves and restores @/ and direction
     " this used to cause me many troubles
-
-    call s:current_index(a:force, a:cmd)
-
-    if s:Msg != ""
-        call s:schedule_echo(s:Msg, s:Highlight)
-    endif
+    call s:schedule_echo()
 endfunction
