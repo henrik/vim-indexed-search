@@ -51,7 +51,7 @@ function! s:search(query, force)
     return [total, exact, after]
 endfunction
 
-function! s:index_message(total, a:exact, a:after, force)
+function! s:index_message(total, exact, after, force)
     let hl = "Directory"
     let msg = ""
 
@@ -103,7 +103,7 @@ function! s:current_index(force, cmd)
     endif
 
     let [total, exact, after] = s:search(@/, a:force)
-    let [s:Highlight, s:Msg] s:index_message(total, exact, after)
+    let [s:Highlight, s:Msg] = s:index_message(total, exact, after, a:force)
     return ""
 endfunction
 
@@ -146,9 +146,9 @@ function! indexed_search#ShowCurrentSearchIndex(force, cmd)
     " NB: function saves and restores @/ and direction
     " this used to cause me many troubles
 
-    call s:CountCurrentSearchIndex(a:force, a:cmd) " -> s:Msg, s:Highlight
+    call s:current_index(a:force, a:cmd)
 
     if s:Msg != ""
-        call s:schedule_echo(s:Msg, s:Highlight )
+        call s:schedule_echo(s:Msg, s:Highlight)
     endif
 endfunction

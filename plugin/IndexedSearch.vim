@@ -92,7 +92,7 @@ if !exists("g:indexed_search_show_index_mappings")
 endif
 
 
-command! ShowSearchIndex :call s:ShowCurrentSearchIndex(1,'')
+command! ShowSearchIndex :call indexed_search#ShowCurrentSearchIndex(1,'')
 
 " before 061114  we had op invocation inside the function but this
 "                did not properly keep @/ and direction (func.return restores @/ and direction)
@@ -100,8 +100,8 @@ command! ShowSearchIndex :call s:ShowCurrentSearchIndex(1,'')
 "                @/ and direction is restored at return from function
 "                We must have op invocation at the toplevel of mapping even though this
 "                makes mappings longer.
-nnoremap <silent>n :let v:errmsg=''<cr>:silent! norm! n<cr>:call indexed_search#>ShowCurrentSearchIndex(0,'!')<cr>
-nnoremap <silent>N :let v:errmsg=''<cr>:silent! norm! N<cr>:call indexed_search#>ShowCurrentSearchIndex(0,'!')<cr>
+nnoremap <silent>n :let v:errmsg=''<cr>:silent! norm! n<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
+nnoremap <silent>N :let v:errmsg=''<cr>:silent! norm! N<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
 if g:indexed_search_keep_cursor_on_initial_result
   nnoremap <silent>* :let v:errmsg=''<cr>:silent! norm! *N<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
 else
