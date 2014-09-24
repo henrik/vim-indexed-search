@@ -97,10 +97,10 @@ command! -bang ShowSearchIndex :call indexed_search#ShowCurrentSearchIndex(<bang
 "                @/ and direction is restored at return from function
 "                We must have op invocation at the toplevel of mapping even though this
 "                makes mappings longer.
-nnoremap <silent>n :let v:errmsg=''<cr>:silent! norm! n<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
-nnoremap <silent>N :let v:errmsg=''<cr>:silent! norm! N<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
-nnoremap <silent>* :let v:errmsg=''<cr>:silent! norm! *<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
-nnoremap <silent># :let v:errmsg=''<cr>:silent! norm! #<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
+nnoremap <silent>n  :silent! norm! n<CR>:ShowSearchIndex<CR>
+nnoremap <silent>N  :silent! norm! N<CR>:ShowSearchIndex<CR>
+nnoremap <silent>*  :silent! norm! *<CR>:ShowSearchIndex<CR>
+nnoremap <silent>#  :silent! norm! #<CR>:ShowSearchIndex<CR>
 
 if g:indexed_search_show_index_mappings
   nnoremap <silent>\/        :call indexed_search#ShowCurrentSearchIndex(1,'')<cr>
@@ -112,8 +112,8 @@ endif
 " before 061120,  I had cmapping for <cr> which was very intrusive. Didn't work
 "                 with supertab iInde<c-x><c-p>(resulted in something like recursive <c-r>=
 " after  061120,  I remap [/?] instead of remapping <cr>. Works in vim6, too
-nnoremap / :call indexed_search#DelaySearchIndex(0,'')<cr>/
-nnoremap ? :call indexed_search#DelaySearchIndex(0,'')<cr>?
+nnoremap /  :ShowSearchIndex<CR>
+nnoremap ?  :ShowSearchIndex<CR>
 
 
 let &cpo = s:save_cpo
