@@ -41,11 +41,6 @@
 " In case of bugs and wishes, please email: iler.ml at gmail.com
 " ------------------------------------------------------
 
-
-" before 061119, it worked only vim7 not on vim6 (we use winrestview())
-" after  061119, works only on vim6 (we avoid winrestview on vim6)
-
-
 if exists("g:loaded_indexed_search") || &cp || v:version < 700
     finish
 endif
