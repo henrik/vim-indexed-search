@@ -1,7 +1,3 @@
-let s:ScheduledEcho = ''
-let g:IndSearchUT = &ut
-
-
 function! s:milli_since(start)
     " Use it like this:
     "   :let s = reltime()
@@ -94,7 +90,7 @@ function! s:index_message(total, exact, after, force)
     return [hl, msg."  /".@/."/"]
 endfunction
 
-function! s:current_index(force, cmd)
+function! s:current_index(force)
     if @/ == '' || (!a:force && line('$') >= g:indexed_search_max_lines)
         return ['', '']
     endif
