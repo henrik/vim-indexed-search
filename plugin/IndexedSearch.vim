@@ -88,7 +88,7 @@ if !exists("g:indexed_search_show_index_mappings")
 endif
 
 
-command! -bang ShowSearchIndex :call indexed_search#ShowCurrentSearchIndex(<bang>0)
+command! -bang ShowSearchIndex :call indexed_search#search_index(<bang>0)
 
 " before 061120,  I had cmapping for <cr> which was very intrusive. Didn't work
 "                 with supertab iInde<c-x><c-p>(resulted in something like recursive <c-r>=

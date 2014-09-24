@@ -106,7 +106,7 @@ function! s:echo(force)
     endif
 endfunction
 
-function! s:schedule_echo(force)
+function! indexed_search#search_index(force)
     let s:save_ut = &ut
     let s:force = a:force
 
@@ -118,15 +118,4 @@ function! s:schedule_echo(force)
             \ call s:echo(s:force)     |
             \ call s:destroy_augroup('IndexedSearchAutoCmds')
     augroup END
-endfunction
-
-
-function! indexed_search#DelaySearchIndex(force,cmd)
-    call s:schedule_echo(a:force)
-endfunction
-
-function! indexed_search#ShowCurrentSearchIndex(force, cmd)
-    " NB: function saves and restores @/ and direction
-    " this used to cause me many troubles
-    call s:schedule_echo(a:force)
 endfunction
