@@ -82,19 +82,14 @@ if !exists('g:indexed_search_shortmess')
     let g:indexed_search_shortmess = 0
 endif
 
-" Mappings
-if !exists("g:indexed_search_show_index_mappings")
-    let g:indexed_search_show_index_mappings = 1
-endif
-
 
 command! -bang ShowSearchIndex :call indexed_search#search_index(<bang>0)
 
 " before 061120,  I had cmapping for <cr> which was very intrusive. Didn't work
 "                 with supertab iInde<c-x><c-p>(resulted in something like recursive <c-r>=
 " after  061120,  I remap [/?] instead of remapping <cr>. Works in vim6, too
-nnoremap /  :ShowSearchIndex<CR>
-nnoremap ?  :ShowSearchIndex<CR>
+nnoremap /  :ShowSearchIndex<CR>/
+nnoremap ?  :ShowSearchIndex<CR>?
 
 " before 061114  we had op invocation inside the function but this
 "                did not properly keep @/ and direction (func.return restores @/ and direction)
