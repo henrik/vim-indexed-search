@@ -29,35 +29,6 @@ function! s:destroy_augroup(group)
 endfunction
 
 
-function! s:ScheduleEcho(msg,highlight)
-
-    "if &ut > 50 | let g:IndSearchUT=&ut | let &ut=50 | endif
-    "if &ut > 100 | let g:IndSearchUT=&ut | let &ut=100 | endif
-    if &ut > 200 | let g:IndSearchUT=&ut | let &ut=200 | endif
-    " 061116 &ut is sometimes not restored and drops permanently to 50. But how ?
-
-    let s:ScheduledEcho      = a:msg
-    let use_colors = !exists('g:indexed_search_colors') || g:indexed_search_colors
-    let s:ScheduledHighlight = ( use_colors ? a:highlight : "None" )
-
-    augroup IndSearchEcho
-        autocmd CursorHold *
-        \ exe 'set ut='.g:IndSearchUT                           |
-        \ if s:DelaySearchIndex                                 |
-        \     call indexed_search#ShowCurrentSearchIndex(0,'')  |
-        \     let s:ScheduledEcho = s:Msg                       |
-        \     let s:ScheduledHighlight = s:Highlight            |
-        \     let s:DelaySearchIndex = 0                        |
-        \ endif                                                 |
-        \ if s:ScheduledEcho != ""                              |
-        \     call s:colored_echo(s:ScheduledEcho, s:ScheduledHighlight)  |
-        \     let s:ScheduledEcho=''                            |
-        \ endif                                                 |
-        \ call s:destroy_augroup('IndSearchEcho')
-        " how about moving contents of this au into function
-    augroup END
-endfunction
-
 function! s:search(query, force)
     let winview = winsaveview()
     let line = winview["lnum"]
@@ -136,10 +107,39 @@ function! s:current_index(force, cmd)
     return ""
 endfunction
 
+function! s:schedule_echo(msg,highlight)
+
+    "if &ut > 50 | let g:IndSearchUT=&ut | let &ut=50 | endif
+    "if &ut > 100 | let g:IndSearchUT=&ut | let &ut=100 | endif
+    if &ut > 200 | let g:IndSearchUT=&ut | let &ut=200 | endif
+    " 061116 &ut is sometimes not restored and drops permanently to 50. But how ?
+
+    let s:ScheduledEcho      = a:msg
+    let use_colors = !exists('g:indexed_search_colors') || g:indexed_search_colors
+    let s:ScheduledHighlight = ( use_colors ? a:highlight : "None" )
+
+    augroup IndSearchEcho
+        autocmd CursorHold *
+        \ exe 'set ut='.g:IndSearchUT                           |
+        \ if s:DelaySearchIndex                                 |
+        \     call indexed_search#ShowCurrentSearchIndex(0,'')  |
+        \     let s:ScheduledEcho = s:Msg                       |
+        \     let s:ScheduledHighlight = s:Highlight            |
+        \     let s:DelaySearchIndex = 0                        |
+        \ endif                                                 |
+        \ if s:ScheduledEcho != ""                              |
+        \     call s:colored_echo(s:ScheduledEcho, s:ScheduledHighlight)  |
+        \     let s:ScheduledEcho=''                            |
+        \ endif                                                 |
+        \ call s:destroy_augroup('IndSearchEcho')
+        " how about moving contents of this au into function
+    augroup END
+endfunction
+
 
 function! indexed_search#DelaySearchIndex(force,cmd)
     let s:DelaySearchIndex = 1
-    call s:ScheduleEcho('','')
+    call s:schedule_echo('','')
 endfunction
 
 function! indexed_search#ShowCurrentSearchIndex(force, cmd)
@@ -149,6 +149,6 @@ function! indexed_search#ShowCurrentSearchIndex(force, cmd)
     call s:CountCurrentSearchIndex(a:force, a:cmd) " -> s:Msg, s:Highlight
 
     if s:Msg != ""
-        call s:ScheduleEcho(s:Msg, s:Highlight )
+        call s:schedule_echo(s:Msg, s:Highlight )
     endif
 endfunction
