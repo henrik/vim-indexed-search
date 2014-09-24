@@ -46,11 +46,7 @@
 " after  061119, works only on vim6 (we avoid winrestview on vim6)
 
 
-"if version < 700 | finish | endif " we need vim7 at least. Won't work for vim6
-
-"if &cp | echo "warning: IndexedSearch.vim need nocp" | finish | endif " we need &nocp mode
-
-if exists("g:loaded_indexed_search")
+if exists("g:loaded_indexed_search") || &cp || v:version < 700
     finish
 endif
 let g:loaded_indexed_search = 1
