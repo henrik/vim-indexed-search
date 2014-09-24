@@ -82,11 +82,7 @@ if !exists('g:indexed_search_shortmess')
     let g:indexed_search_shortmess = 0
 endif
 
-" -------------- Jump to the next result setting -------------------
-if !exists("g:indexed_search_keep_cursor_on_initial_result")
-    let g:indexed_search_keep_cursor_on_initial_result = 0
-endif
-
+" Mappings
 if !exists("g:indexed_search_show_index_mappings")
     let g:indexed_search_show_index_mappings = 1
 endif
@@ -102,11 +98,7 @@ command! ShowSearchIndex :call indexed_search#ShowCurrentSearchIndex(1,'')
 "                makes mappings longer.
 nnoremap <silent>n :let v:errmsg=''<cr>:silent! norm! n<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
 nnoremap <silent>N :let v:errmsg=''<cr>:silent! norm! N<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
-if g:indexed_search_keep_cursor_on_initial_result
-  nnoremap <silent>* :let v:errmsg=''<cr>:silent! norm! *N<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
-else
-  nnoremap <silent>* :let v:errmsg=''<cr>:silent! norm! *<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
-endif
+nnoremap <silent>* :let v:errmsg=''<cr>:silent! norm! *<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
 nnoremap <silent># :let v:errmsg=''<cr>:silent! norm! #<cr>:call indexed_search#ShowCurrentSearchIndex(0,'!')<cr>
 
 if g:indexed_search_show_index_mappings
