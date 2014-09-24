@@ -106,7 +106,8 @@ function! s:echo(force)
     endif
 endfunction
 
-function! indexed_search#search_index(force)
+
+function! indexed_search#show_index(force)
     let s:save_ut = &ut
     let s:force = a:force
 

@@ -50,7 +50,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-"  Performance tuning limits
+" Performance tuning limits
 if !exists('g:indexed_search_max_lines')
     " Max filesize (in lines) up to where current_index() works
     let g:indexed_search_max_lines = 30000
@@ -74,7 +74,7 @@ if !exists('g:indexed_search_shortmess')
 endif
 
 
-command! -bang ShowSearchIndex :call indexed_search#search_index(<bang>0)
+command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
 
 " before 061120,  I had cmapping for <cr> which was very intrusive. Didn't work
 "                 with supertab iInde<c-x><c-p>(resulted in something like recursive <c-r>=
@@ -82,14 +82,15 @@ command! -bang ShowSearchIndex :call indexed_search#search_index(<bang>0)
 nnoremap /  :ShowSearchIndex<CR>/
 nnoremap ?  :ShowSearchIndex<CR>?
 
-" before 061114  we had op invocation inside the function but this
-"                did not properly keep @/ and direction (func.return restores @/ and direction)
+" before 061114  we had op invocation inside the function but this did not
+"                properly keep @/ and direction (func.return restores @/ and direction)
 " after  061114  invoking op inside the function does not work because
 "                @/ and direction is restored at return from function
-"                We must have op invocation at the toplevel of mapping even though this
-"                makes mappings longer.
+"                We must have op invocation at the toplevel of mapping even
+"                though this makes mappings longer.
 nnoremap <silent>n  :silent! norm! n<CR>:ShowSearchIndex<CR>
 nnoremap <silent>N  :silent! norm! N<CR>:ShowSearchIndex<CR>
+
 nnoremap <silent>*  :silent! norm! *<CR>:ShowSearchIndex<CR>
 nnoremap <silent>#  :silent! norm! #<CR>:ShowSearchIndex<CR>
 
