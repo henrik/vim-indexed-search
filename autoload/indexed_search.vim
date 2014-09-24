@@ -106,23 +106,23 @@ function! s:current_index(force, cmd)
     return ""
 endfunction
 
+function! s:echo()
+    call s:current_index(0, '')
+    if s:Msg != ''
+        call s:colored_echo(s:Msg, (g:indexed_search_colors ? s:Highlight : "None"))
+    endif
+endfunction
+
 function! s:schedule_echo()
+    let s:save_ut = &ut
 
-    "if &ut > 50 | let g:IndSearchUT=&ut | let &ut=50 | endif
-    "if &ut > 100 | let g:IndSearchUT=&ut | let &ut=100 | endif
-    if &ut > 200 | let g:IndSearchUT=&ut | let &ut=200 | endif
     " 061116 &ut is sometimes not restored and drops permanently to 50. But how ?
-
-    augroup IndSearchEcho
+    if &ut > 200 | let &ut=200 | endif
+    augroup IndexedSearchAutoCmds
         autocmd CursorHold *
-        \ exe 'set ut='.g:IndSearchUT                           |
-        \ call s:current_index(0, '')                           |
-        \ if s:Msg != ""                                        |
-        \     call s:colored_echo(s:Msg, s:Highlight)           |
-        \     let s:Msg = ''                                    |
-        \ endif                                                 |
-        \ call s:destroy_augroup('IndSearchEcho')
-        " how about moving contents of this au into function
+        \ let &ut = s:save_ut     |
+        \ call s:echo()           |
+        \ call s:destroy_augroup('IndexedSearchAutoCmds')
     augroup END
 endfunction
 
