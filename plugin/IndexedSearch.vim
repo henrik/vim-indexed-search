@@ -88,7 +88,8 @@ if !exists("g:indexed_search_show_index_mappings")
 endif
 
 
-command! ShowSearchIndex :call indexed_search#ShowCurrentSearchIndex(1,'')
+command! -bang ShowSearchIndex :call indexed_search#ShowCurrentSearchIndex(<bang>0)
+
 
 " before 061114  we had op invocation inside the function but this
 "                did not properly keep @/ and direction (func.return restores @/ and direction)
