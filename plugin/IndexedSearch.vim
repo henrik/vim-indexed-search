@@ -90,6 +90,11 @@ endif
 
 command! -bang ShowSearchIndex :call indexed_search#ShowCurrentSearchIndex(<bang>0)
 
+" before 061120,  I had cmapping for <cr> which was very intrusive. Didn't work
+"                 with supertab iInde<c-x><c-p>(resulted in something like recursive <c-r>=
+" after  061120,  I remap [/?] instead of remapping <cr>. Works in vim6, too
+nnoremap /  :ShowSearchIndex<CR>
+nnoremap ?  :ShowSearchIndex<CR>
 
 " before 061114  we had op invocation inside the function but this
 "                did not properly keep @/ and direction (func.return restores @/ and direction)
@@ -101,19 +106,6 @@ nnoremap <silent>n  :silent! norm! n<CR>:ShowSearchIndex<CR>
 nnoremap <silent>N  :silent! norm! N<CR>:ShowSearchIndex<CR>
 nnoremap <silent>*  :silent! norm! *<CR>:ShowSearchIndex<CR>
 nnoremap <silent>#  :silent! norm! #<CR>:ShowSearchIndex<CR>
-
-if g:indexed_search_show_index_mappings
-  nnoremap <silent>\/        :call indexed_search#ShowCurrentSearchIndex(1,'')<cr>
-  nnoremap <silent>\\        :call indexed_search#ShowCurrentSearchIndex(1,'')<cr>
-  nnoremap <silent>g/        :call indexed_search#ShowCurrentSearchIndex(1,'')<cr>
-endif
-
-
-" before 061120,  I had cmapping for <cr> which was very intrusive. Didn't work
-"                 with supertab iInde<c-x><c-p>(resulted in something like recursive <c-r>=
-" after  061120,  I remap [/?] instead of remapping <cr>. Works in vim6, too
-nnoremap /  :ShowSearchIndex<CR>
-nnoremap ?  :ShowSearchIndex<CR>
 
 
 let &cpo = s:save_cpo
