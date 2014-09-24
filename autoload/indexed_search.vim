@@ -40,21 +40,22 @@ function! s:ScheduleEcho(msg,highlight)
     let use_colors = !exists('g:indexed_search_colors') || g:indexed_search_colors
     let s:ScheduledHighlight = ( use_colors ? a:highlight : "None" )
 
-    aug IndSearchEcho
-
-    au CursorHold *
-      \ exe 'set ut='.g:IndSearchUT |
-      \ if s:DelaySearchIndex | call indexed_search#ShowCurrentSearchIndex(0,'') |
-      \    let s:ScheduledEcho = s:Msg | let s:ScheduledHighlight = s:Highlight |
-      \    let s:DelaySearchIndex = 0 | endif |
-      \ if s:ScheduledEcho != ""
-      \ | call s:colored_echo(s:ScheduledEcho, s:ScheduledHighlight)
-      \ | let s:ScheduledEcho='' |
-      \ endif |
-      \ call s:destroy_augroup('IndSearchEcho')
-    " how about moving contents of this au into function
-
-    aug END
+    augroup IndSearchEcho
+        autocmd CursorHold *
+        \ exe 'set ut='.g:IndSearchUT                           |
+        \ if s:DelaySearchIndex                                 |
+        \     call indexed_search#ShowCurrentSearchIndex(0,'')  |
+        \     let s:ScheduledEcho = s:Msg                       |
+        \     let s:ScheduledHighlight = s:Highlight            |
+        \     let s:DelaySearchIndex = 0                        |
+        \ endif                                                 |
+        \ if s:ScheduledEcho != ""                              |
+        \     call s:colored_echo(s:ScheduledEcho, s:ScheduledHighlight)  |
+        \     let s:ScheduledEcho=''                            |
+        \ endif                                                 |
+        \ call s:destroy_augroup('IndSearchEcho')
+        " how about moving contents of this au into function
+    augroup END
 endfunction
 
 function! s:search(query, force)
