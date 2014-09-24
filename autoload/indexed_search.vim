@@ -96,20 +96,17 @@ endfunction
 
 function! s:current_index(force, cmd)
     if @/ == '' || (!a:force && line('$') >= g:indexed_search_max_lines)
-        let s:Msg = ''
-        let s:Highlight = ''
-        return ""
+        return ['', '']
     endif
 
     let [total, exact, after] = s:search(@/, a:force)
-    let [s:Highlight, s:Msg] = s:index_message(total, exact, after, a:force)
-    return ""
+    return s:index_message(total, exact, after, a:force)
 endfunction
 
 function! s:echo()
-    call s:current_index(0, '')
-    if s:Msg != ''
-        call s:colored_echo(s:Msg, (g:indexed_search_colors ? s:Highlight : "None"))
+    let [hl, msg] = s:current_index(0, '')
+    if msg != ''
+        call s:colored_echo(msg, (g:indexed_search_colors ? hl : "None"))
     endif
 endfunction
 
