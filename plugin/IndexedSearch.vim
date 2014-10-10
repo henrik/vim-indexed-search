@@ -1,8 +1,8 @@
 " File:         IndexedSearch.vim
 " Author:       Yakov Lerner <iler.ml@gmail.com>
 " URL:          http://www.vim.org/scripts/script.php?script_id=1682
-" Last change:  2006-11-21
-"
+" Last change:  2014-10-10
+
 " This script redefines 6 search commands (/,?,n,N,*,#). At each search,
 " it shows at which match number you are, and the total number
 " of matches, like this: "At Nth match out of M". This is printed
@@ -52,24 +52,25 @@ set cpo&vim
 
 " Performance tuning limits
 if !exists('g:indexed_search_max_lines')
-    " Max filesize (in lines) up to where current_index() works
+    " Max filesize (in lines) up to where the plugin works
     let g:indexed_search_max_lines = 30000
 endif
 
 if !exists("g:indexed_search_max_hits")
+    " Max number of matches up to where the plugin stops counting
     let g:indexed_search_max_hits = 1000
 endif
 
-" Appearance
+" Appearance settings
 if !exists('g:indexed_search_colors')
-    " 1 or undefined - use colors for messages,
-    " 0              - no colors
+    " 1 or null - use colors for messages,
+    " 0         - no colors
     let g:indexed_search_colors = 1
 endif
 
 if !exists('g:indexed_search_shortmess')
-    " 1              - shorter messages;
-    " 0 or undefined - longer messages.
+    " 1         - shorter messages;
+    " 0 or null - longer messages.
     let g:indexed_search_shortmess = 0
 endif
 
