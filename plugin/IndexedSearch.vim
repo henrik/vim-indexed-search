@@ -107,8 +107,8 @@ if g:indexed_search_mappings
         nnoremap <silent># #:ShowSearchIndex<CR>
     endif
 
-    nnoremap <silent>*  :silent! norm! *<CR>:ShowSearchIndex<CR>
-    nnoremap <silent>#  :silent! norm! #<CR>:ShowSearchIndex<CR>
+    nnoremap <silent>n n:ShowSearchIndex<CR>
+    nnoremap <silent>N N:ShowSearchIndex<CR>
 endif
 
 
