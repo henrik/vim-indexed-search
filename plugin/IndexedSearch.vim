@@ -78,6 +78,10 @@ if !exists('g:indexed_search_mappings')
     let g:indexed_search_mappings = 1
 endif
 
+if !exists('g:indexed_search_dont_move')
+    let g:indexed_search_dont_move = 0
+endif
+
 command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
 
 if g:indexed_search_mappings
@@ -95,8 +99,13 @@ if g:indexed_search_mappings
     "                @/ and direction is restored at return from function
     "                We must have op invocation at the toplevel of mapping even
     "                though this makes mappings longer.
-    nnoremap <silent>n  :silent! norm! n<CR>:ShowSearchIndex<CR>
-    nnoremap <silent>N  :silent! norm! N<CR>:ShowSearchIndex<CR>
+    if g:indexed_search_dont_move
+        nnoremap <silent>* *N:ShowSearchIndex<CR>
+        nnoremap <silent># #N:ShowSearchIndex<CR>
+    else
+        nnoremap <silent>* *:ShowSearchIndex<CR>
+        nnoremap <silent># #:ShowSearchIndex<CR>
+    endif
 
     nnoremap <silent>*  :silent! norm! *<CR>:ShowSearchIndex<CR>
     nnoremap <silent>#  :silent! norm! #<CR>:ShowSearchIndex<CR>
