@@ -83,6 +83,10 @@ if !exists('g:indexed_search_dont_move')
     let g:indexed_search_dont_move = 0
 endif
 
+if !exists('g:indexed_search_unfold')
+    let g:indexed_search_unfold = 1
+endif
+
 command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
 
 if g:indexed_search_mappings
@@ -108,8 +112,13 @@ if g:indexed_search_mappings
         nnoremap <silent># #:ShowSearchIndex<CR>
     endif
 
-    nnoremap <silent>n n:ShowSearchIndex<CR>
-    nnoremap <silent>N N:ShowSearchIndex<CR>
+    if g:indexed_search_unfold
+        nnoremap <silent>n nzv:ShowSearchIndex<CR>
+        nnoremap <silent>N Nzv:ShowSearchIndex<CR>
+    else
+        nnoremap <silent>n n:ShowSearchIndex<CR>
+        nnoremap <silent>N N:ShowSearchIndex<CR>
+    endif
 endif
 
 
