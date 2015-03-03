@@ -90,20 +90,9 @@ endif
 command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
 
 if g:indexed_search_mappings
-    " before 061120,  I had cmapping for <cr> which was very intrusive.
-    "                 Didn't work with supertab iInde<c-x><c-p> resulted in
-    "                 something like recursive <c-r>=.
-    " after  061120,  I remap [/?] instead of remapping <cr>. Works in vim6, too
     nnoremap /  :ShowSearchIndex<CR>/
     nnoremap ?  :ShowSearchIndex<CR>?
 
-    " before 061114  we had op invocation inside the function but this did not
-    "                properly keep @/ and direction (func.return restores @/
-    "                and direction)
-    " after  061114  invoking op inside the function does not work because
-    "                @/ and direction is restored at return from function
-    "                We must have op invocation at the toplevel of mapping even
-    "                though this makes mappings longer.
     if g:indexed_search_dont_move
         nnoremap <silent>* *N:ShowSearchIndex<CR>
         nnoremap <silent># #N:ShowSearchIndex<CR>

@@ -111,7 +111,6 @@ function! indexed_search#show_index(force)
     let s:save_ut = &ut
     let s:force = a:force
 
-    " 061116 &ut is sometimes not restored and drops permanently to 50. But how ?
     if &ut > 200 | let &ut = 200 | endif
     augroup IndexedSearchAutoCmds
         autocmd CursorHold *
