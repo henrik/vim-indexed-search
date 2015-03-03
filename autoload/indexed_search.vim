@@ -99,7 +99,7 @@ function! s:current_index(force)
     return s:index_message(total, exact, after, a:force)
 endfunction
 
-function! s:echo(force)
+function! s:echo_index(force)
     let [hl, msg] = s:current_index(a:force)
     if msg != ''
         call s:colored_echo(msg, (g:indexed_search_colors ? hl : "None"))
@@ -115,8 +115,8 @@ function! indexed_search#show_index(force)
     if &ut > 200 | let &ut = 200 | endif
     augroup IndexedSearchAutoCmds
         autocmd CursorHold *
-            \ let &ut = s:save_ut      |
-            \ call s:echo(s:force)     |
+            \ let &ut = s:save_ut         |
+            \ call s:echo_index(s:force)  |
             \ call s:destroy_augroup('IndexedSearchAutoCmds')
     augroup END
 endfunction
