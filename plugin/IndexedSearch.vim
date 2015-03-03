@@ -89,24 +89,36 @@ endif
 
 command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
 
+noremap <Plug>(indexed-search-/)  :ShowSearchIndex<CR>/
+noremap <Plug>(indexed-search-?)  :ShowSearchIndex<CR>?
+
+noremap <silent> <Plug>(indexed-search-*)  *:ShowSearchIndex<CR>
+noremap <silent> <Plug>(indexed-search-#)  #:ShowSearchIndex<CR>
+
+noremap <silent> <Plug>(indexed-search-n)  n:ShowSearchIndex<CR>
+noremap <silent> <Plug>(indexed-search-N)  N:ShowSearchIndex<CR>
+
 if g:indexed_search_mappings
-    nnoremap /  :ShowSearchIndex<CR>/
-    nnoremap ?  :ShowSearchIndex<CR>?
+    nmap / <Plug>(indexed-search-/)
+    nmap ? <Plug>(indexed-search-?)
 
     if g:indexed_search_dont_move
+        " These can't be implemented using the <Plug> mappings because the
+        " 'N' needs to happen after the '*' (or '#') and before the
+        " :ShowSearchIndex
         nnoremap <silent>* *N:ShowSearchIndex<CR>
         nnoremap <silent># #N:ShowSearchIndex<CR>
     else
-        nnoremap <silent>* *:ShowSearchIndex<CR>
-        nnoremap <silent># #:ShowSearchIndex<CR>
+        nmap * <Plug>(indexed-search-*)
+        nmap # <Plug>(indexed-search-#)
     endif
 
     if g:indexed_search_unfold
-        nnoremap <silent>n nzv:ShowSearchIndex<CR>
-        nnoremap <silent>N Nzv:ShowSearchIndex<CR>
+        nmap n <Plug>(indexed-search-n)zv
+        nmap N <Plug>(indexed-search-N)zv
     else
-        nnoremap <silent>n n:ShowSearchIndex<CR>
-        nnoremap <silent>N N:ShowSearchIndex<CR>
+        nmap n <Plug>(indexed-search-n)
+        nmap N <Plug>(indexed-search-N)
     endif
 endif
 
