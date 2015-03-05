@@ -1,52 +1,91 @@
-*indexedsearch.txt*  Show match's count and index with search command
+*indexed-search.txt*  Show match's count and index with search command
 
-Authors:  Yakov Lerner and Otto Modinos
+Author: Yakov Lerner
+        Otto Modinos
 
-INTRODUCTION                                    *indexedsearch*
+INTRODUCTION                                    *indexed-search*
 
 This plugin redefines 6 search commands (/,?,n,N,*,#). At every 
-search command, it automatically prints>
+search command, it automatically prints >
        "At match #N out of M matches". 
->
+<
 -- the total number of matches (M) and the number(index) of current 
 match (N). This helps to get oriented when searching forward and 
 backward. 
 
-There are no new commands and no new behavior to learn. 
+There's only one command and no new behavior to learn.
 Just watch the bottom line when you do /,?,n,N,*,#. 
 
-Works on vim7.  Won't cause slowdown 
-on very large files (but then counters are not displayed). 
+Works on vim7.  Won't cause slowdown on very large files (but then counters
+are not displayed). 
 
------------------------------------------------------- 
 
-COMMANDS                                        *:ShowSearchIndex*
+=============================================================================
+COMMANDS                                        *indexed-search-commands*
 
------------------------------------------------------ 
-Checking At which Match Number You Are 
-..................................................... 
-You can also press g/ or \\ or \/ (that's backslach then slash), it's the same
-as running :ShowSearchIndex, to show at which match index you are, without moving 
-the cursor. 
-To disable these mappings, set 'let g:indexed_search_show_index_mappings=0'
+                                                    *:ShowSearchIndex*
+:ShowSearchIndex        Shows a message indicating your position relative to
+                        the search matches in the file.  The message's content
+                        also depends on the value of the |g:indexed_search_shortmess|
+                        and |g:indexed_search_colors| options.
 
-Messages are: >
-    At Nth match of M (if cursor is exactly on the match) 
-    Betwen matches N1-N2 of M (if cursor is between matches) 
-    At single match 
-    Before first match, of N 
-    After last match, of N 
->
 
------------------------------------------------------- 
-To disable colors for messages, set 'let g:indexed_search_colors=0'
------------------------------------------------------- 
-To show slightly shorter messages, define 'let g:indexed_search_shortmess=1'
------------------------------------------------------- 
+=============================================================================
+OPTIONS                                         *indexed-search-options*
 
-PERFORMANCE
+                                                *g:indexed_search_colors*
+g:indexed_search_colors 
+                If 0, the messages are not displayed in color
+                Default: 1
 
-Plugin bypasses the calculation of match index when 
-it would take too much time (too many matches, too large file). You can 
-tune performance limits, look into script sources after comment 
-"Performance tuning limits". 
+                                                *g:indexed_search_shortmess*
+g:indexed_search_shortmess
+                If 1, the messages are (a bit) shorter.
+                Default: 0
+
+                                                *g:indexed_search_max_lines*
+g:indexed_search_max_lines
+                If a file has more lines than this, the plugin doesn't display
+                messages,  for performance reasons.  |indexed-search-performance|
+                Default: 3000
+
+                                                *g:indexed_search_max_hits*
+g:indexed_search_max_hits
+                When there are more matches than this, the plugin doesn't try
+                to count all of them.  |indexed-search-performance|
+                Default: 1000
+
+                                                *g:indexed_search_mappings*
+g:indexed_search_mappings
+                If 0, does not create mappings.  |indexed-search-mappings|
+                Default: 1
+
+                                                *g:indexed_search_dont_move*
+g:indexed_search_dont_move
+                If 1, the mappings for * and # stay on the word under the
+                cursor.  Basically, *N (or #N).
+                Default: 0
+
+                                                *g:indexed_search_unfold*
+g:indexed_search_unfold
+                If 1, the mappings for n and N open the least amount of folds
+                needed to show the match.  Basically, nzv (or Nzv).
+                Default: 0
+
+=============================================================================
+MAPPINGS                                        *indexed-search-mappings*
+
+Indexed Search remaps the standard Vim keys /, ?, *, #, n and N, so that the
+appropriate message is displayed afterwards. If you don't want that, you can
+disable these mappings by letting |g:indexed_search_mappings| to 0.
+
+
+=============================================================================
+PERFORMANCE                                     *indexed-search-performance*
+
+Plugin bypasses the calculation of match index when it would take too much
+time (too many matches, too large file).  To tune these performance limits,
+see *g:indexed_search_max_lines* and *g:indexed_search_max_hits*
+
+
+vim:tw=78:ts=8:ft=help:norl:
