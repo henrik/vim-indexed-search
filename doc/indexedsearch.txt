@@ -85,7 +85,7 @@ PERFORMANCE                                     *indexed-search-performance*
 
 Plugin bypasses the calculation of match index when it would take too much
 time (too many matches, too large file).  To tune these performance limits,
-see *g:indexed_search_max_lines* and *g:indexed_search_max_hits*
+see |g:indexed_search_max_lines| and |g:indexed_search_max_hits|
 
 
 vim:tw=78:ts=8:ft=help:norl:
