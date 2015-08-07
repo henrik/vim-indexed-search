@@ -74,6 +74,12 @@ if !exists('g:indexed_search_shortmess')
     let g:indexed_search_shortmess = 0
 endif
 
+if !exists('g:indexed_search_numbered_only')
+    " 1         - numbered only count
+    " 0         - first and last spelled ou
+    let g:indexed_search_numbered_only = 0
+endif
+
 " Mappings
 if !exists('g:indexed_search_mappings')
     let g:indexed_search_mappings = 1
