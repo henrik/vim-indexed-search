@@ -76,7 +76,7 @@ endif
 
 if !exists('g:indexed_search_numbered_only')
     " 1         - numbered only count
-    " 0         - first and last spelled ou
+    " 0         - first and last spelled out
     let g:indexed_search_numbered_only = 0
 endif
 
