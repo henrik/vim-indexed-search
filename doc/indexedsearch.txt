@@ -43,6 +43,12 @@ g:indexed_search_shortmess
                 If 1, the messages are (a bit) shorter.
                 Default: 0
 
+                                                *g:indexed_search_numbered_only*
+g:indexed_search_numbered_only
+                If 1, then the messages only contain the search count. No
+                first of and last of.
+                Default: 0
+
                                                 *g:indexed_search_max_lines*
 g:indexed_search_max_lines
                 If a file has more lines than this, the plugin doesn't display

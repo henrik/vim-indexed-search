@@ -63,13 +63,13 @@ function! s:index_message(total, exact, after, force)
     if a:total == 0
         let hl = "Error"
         let msg = "No matches"
-    elseif a:exact == 1 && a:total == 1
+    elseif a:exact == 1 && a:total == 1 && g:indexed_search_numbered_only != 1
         " hl remains default
         let msg = "Single match"
-    elseif a:exact == 1
+    elseif a:exact == 1 && g:indexed_search_numbered_only != 1
         let hl = "Search"
         let msg = "First of ". shortmatch
-    elseif a:exact == a:total
+    elseif a:exact == a:total && g:indexed_search_numbered_only != 1
         let hl = "LineNr"
         let msg = "Last of ". shortmatch
     elseif a:exact >= 0
