@@ -12,6 +12,7 @@ endfunction
 
 function! s:colored_echo(msg, hl)
     execute "echohl ". a:hl
+    redraw
     echo a:msg
     echohl None
 endfunction
