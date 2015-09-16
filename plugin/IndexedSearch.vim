@@ -3,27 +3,17 @@
 " URL:          http://www.vim.org/scripts/script.php?script_id=1682
 " Last change:  2014-10-10
 
-" This script redefines 6 search commands (/,?,n,N,*,#). At each search,
-" it shows at which match number you are, and the total number
-" of matches, like this: "At Nth match out of M". This is printed
-" at the bottom line at every n,N,/,?,*,# search command, automatically.
-"
-" To try out the plugin, source it and play with N,n,*,#,/,? commands.
-" At the bottom line, you'll see wha it shows. There are no new
-" commands and no new behavior to learn. Just additional info
-" on the bottom line, whenever you perform search.
-"
-" Works on vim6 and vim7. On very large files, won't cause slowdown
-" because it checks the file size.
-" Don't use if you're sensitive to one of its components :-)
+" This script redefines 6 search commands (/,?,n,N,*,#). At each search, it
+" shows at which match number you are, and the total number of matches, like
+" this: "At nth match out of N". This is printed at the bottom line at every
+" n,N,/,?,*,# search command, automatically.
 "
 " I am posting this plugin because I find it useful.
+
+" :ShowSearchIndex - Checking your match index
 " -----------------------------------------------------
-" Checking Where You Are with respect to Search Matches
-" .....................................................
-" You can press \\ or \/ (that's backslach then slash),
-" or :ShowSearchIndex to show at which match index you are,
-" without moving cursor.
+" At any time, you can use :ShowSearchIndex to show at which match index you
+" are without moving the cursor.
 "
 " If cursor is exactly on the match, the message is:
 "     At Nth match of M
@@ -31,15 +21,15 @@
 "     Betwen matches 189-190 of 300
 "     Before first match, of 300
 "     After last match, of 300
+
+" To disable colors for messages, set g:indexed_search_colors to 0.
+"
+" Performance
 " ------------------------------------------------------
-" To disable colors for messages, set 'let g:indexed_search_colors=0'.
-" ------------------------------------------------------
-" Performance. Plugin bypasses match counting when it would take
-" too much time (too many matches, too large file). You can
-" tune performance limits below, after comment "Performance tuning limits"
-" ------------------------------------------------------
-" In case of bugs and wishes, please email: iler.ml at gmail.com
-" ------------------------------------------------------
+" Plugin bypasses match counting when it would take too much time, i.e. too
+" many matches or too large a file.  You can change these limits with
+" g:indexed_search_max_lines and g:indexed_search_max_hits.
+
 
 if exists("g:loaded_indexed_search") || &cp || v:version < 700
     finish
@@ -63,20 +53,17 @@ endif
 
 " Appearance settings
 if !exists('g:indexed_search_colors')
-    " 1 or null - use colors for messages,
-    " 0         - no colors
+    " Whether to use colors for messages
     let g:indexed_search_colors = 1
 endif
 
 if !exists('g:indexed_search_shortmess')
-    " 1         - shorter messages;
-    " 0 or null - longer messages.
+    " Make messages shorter
     let g:indexed_search_shortmess = 0
 endif
 
 if !exists('g:indexed_search_numbered_only')
-    " 1         - numbered only count
-    " 0         - first and last spelled out
+    " Only show index number, no extra words
     let g:indexed_search_numbered_only = 0
 endif
 
