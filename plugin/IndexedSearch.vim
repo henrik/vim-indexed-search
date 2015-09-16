@@ -93,6 +93,11 @@ if !exists('g:indexed_search_unfold')
     let g:indexed_search_unfold = 1
 endif
 
+if !exists('g:indexed_search_center')
+    let g:indexed_search_center = 0
+endif
+
+
 command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
 
 noremap <Plug>(indexed-search-/)  :ShowSearchIndex<CR>/
@@ -119,13 +124,16 @@ if g:indexed_search_mappings
         nmap # <Plug>(indexed-search-#)
     endif
 
-    if g:indexed_search_unfold
-        nmap n <Plug>(indexed-search-n)zv
-        nmap N <Plug>(indexed-search-N)zv
-    else
-        nmap n <Plug>(indexed-search-n)
-        nmap N <Plug>(indexed-search-N)
-    endif
+    " For some reason, unless the zz and zv commands are in the last mapping,
+    " the one that map n would report, they don't work.  That is,
+    "     nmap n nzv
+    "     nmap n nzz
+    " would center the cursor, but not unfold any folds.
+    let suffix = ""
+    if g:indexed_search_unfold | let suffix .= "zv" | endif
+    if g:indexed_search_center | let suffix .= "zz" | endif
+    execute "nmap n <Plug>(indexed-search-n)" . suffix
+    execute "nmap N <Plug>(indexed-search-N)" . suffix
 endif
 
 
