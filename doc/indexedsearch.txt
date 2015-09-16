@@ -78,6 +78,11 @@ g:indexed_search_unfold
                 needed to show the match.  Basically, nzv (or Nzv).
                 Default: 0
 
+g:indexed_search_center
+                If 1, the mappings for n and N also center the cursor on the
+                match.  Basically, nzz (or Nzz).
+                Default: 0
+
 =============================================================================
 MAPPINGS                                        *indexed-search-mappings*
 
