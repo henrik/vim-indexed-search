@@ -111,11 +111,11 @@ if g:indexed_search_mappings
         nmap # <Plug>(indexed-search-#)
     endif
 
-    " For some reason, unless the zz and zv commands are in the last mapping,
-    " the one that map n would report, they don't work.  That is,
-    "     nmap n nzv
+    " For some reason, incremental maps won't work.  That is,
+    "     name n nzv
     "     nmap n nzz
-    " would center the cursor, but not unfold any folds.
+    " would center the cursor (zv) but not unfold any folds (zz).
+    " So gather up all the asked for behaviors and do them in a single map.
     let suffix = ""
     if g:indexed_search_unfold | let suffix .= "zv" | endif
     if g:indexed_search_center | let suffix .= "zz" | endif
