@@ -17,14 +17,6 @@ function! s:colored_echo(msg, hl)
     echohl None
 endfunction
 
-function! s:destroy_augroup(group)
-    execute "augroup ". a:group
-        execute "autocmd!"
-    augroup END
-    execute "augroup! ". a:group
-endfunction
-
-
 function! s:search(query, force)
     let winview = winsaveview()
     let line = winview["lnum"]
@@ -117,6 +109,6 @@ function! indexed_search#show_index(force)
         autocmd CursorHold *
             \ let &ut = s:save_ut         |
             \ call s:echo_index(s:force)  |
-            \ call s:destroy_augroup('IndexedSearchAutoCmds')
+            \ autocmd! IndexedSearchAutoCmds
     augroup END
 endfunction
