@@ -84,6 +84,10 @@ if !exists('g:indexed_search_center')
     let g:indexed_search_center = 0
 endif
 
+if !exists('g:indexed_search_line_info')
+  let g:indexed_search_line_info = 0
+endif
+
 
 command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
 
