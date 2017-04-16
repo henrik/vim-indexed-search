@@ -25,7 +25,7 @@ COMMANDS                                        *indexed-search-commands*
 :ShowSearchIndex        Shows a message indicating your position relative to
                         the search matches in the file.  The message's content
                         also depends on the value of the |g:indexed_search_shortmess|
-                        and |g:indexed_search_colors| options.
+                        |g:indexed_search_line_info| and |g:indexed_search_colors| options.
 
 =============================================================================
 OPTIONS                                         *indexed-search-options*
@@ -70,6 +70,12 @@ g:indexed_search_max_hits
 g:indexed_search_colors
                 If 0, the messages are not displayed in color
                 Default: 1
+                                                *g:indexed_search_line_info*
+g:indexed_search_line_info
+                If 1, the messages also mention the first and the last match 
+                line number in the following format:
+                FM:<first match line no.>, LM:<last match line no.>
+                Default: 0
 
                                                 *g:indexed_search_shortmess*
 g:indexed_search_shortmess
