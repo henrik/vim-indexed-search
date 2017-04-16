@@ -74,7 +74,7 @@ g:indexed_search_colors
 g:indexed_search_line_info
                 If 1, the messages also mention the first and the last match 
                 line number in the following format:
-                FM:<first match line no.>, LM:<last macth line no.>
+                FM:<first match line no.>, LM:<last match line no.>
                 Default: 0
 
                                                 *g:indexed_search_shortmess*
