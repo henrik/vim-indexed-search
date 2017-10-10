@@ -88,6 +88,14 @@ g:indexed_search_numbered_only
                 "First of" and "Last of".
                 Default: 0
 
+                                                *g:indexed_search_n_always_searches_forward*
+g:indexed_search_n_always_searches_forward
+                In vim, by default, the direction of n and N depends on
+                whether / or ? was used for searching forward or backward
+                respectively.
+                If 1, n always search forward and N backward
+                Default: 1
+
 =============================================================================
 MAPPINGS                                        *indexed-search-mappings*
 

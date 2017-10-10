@@ -88,6 +88,10 @@ if !exists('g:indexed_search_line_info')
   let g:indexed_search_line_info = 0
 endif
 
+if !exists('g:indexed_search_n_always_searches_forward')
+  let g:indexed_search_n_always_searches_forward = 1
+endif
+
 
 command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
 
@@ -97,8 +101,15 @@ noremap <Plug>(indexed-search-?)  :ShowSearchIndex<CR>?
 noremap <silent> <Plug>(indexed-search-*)  *:ShowSearchIndex<CR>
 noremap <silent> <Plug>(indexed-search-#)  #:ShowSearchIndex<CR>
 
-noremap <silent> <Plug>(indexed-search-n)  n:ShowSearchIndex<CR>
-noremap <silent> <Plug>(indexed-search-N)  N:ShowSearchIndex<CR>
+if g:indexed_search_n_always_searches_forward
+    noremap <silent><expr> <Plug>(indexed-search-n) 'Nn'[v:searchforward] . ':ShowSearchIndex<CR>'
+    noremap <silent><expr> <Plug>(indexed-search-N) 'nN'[v:searchforward] . ':ShowSearchIndex<CR>'
+else
+    noremap <silent> <Plug>(indexed-search-n)  n:ShowSearchIndex<CR>
+    noremap <silent> <Plug>(indexed-search-N)  N:ShowSearchIndex<CR>
+end
+
+
 
 if g:indexed_search_mappings
     nmap / <Plug>(indexed-search-/)
