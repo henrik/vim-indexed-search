@@ -1,7 +1,7 @@
 " File:         IndexedSearch.vim
 " Author:       Yakov Lerner <iler.ml@gmail.com>
 " URL:          http://www.vim.org/scripts/script.php?script_id=1682
-" Last change:  2014-10-10
+" Last change:  2017-10-22
 
 " This script redefines 6 search commands (/,?,n,N,*,#). At each search, it
 " shows at which match number you are, and the total number of matches, like
