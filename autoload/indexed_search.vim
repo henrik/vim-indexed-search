@@ -110,14 +110,19 @@ endfunction
 
 
 function! indexed_search#show_index(force)
+    if exists('s:save_ut') | return | endif
     let s:save_ut = &ut
+
+    " autocmds run in the context of the script.  So this function's arguments
+    " aren't in scope, we need to use script variables.
     let s:force = a:force
 
-    if &ut > 200 | let &ut = 200 | endif
-    augroup IndexedSearchAutoCmds
+    let &ut = 200
+    augroup indexed_search_delayed
         autocmd CursorHold *
             \ let &ut = s:save_ut         |
+            \ unlet s:save_ut             |
             \ call s:echo_index(s:force)  |
-            \ autocmd! IndexedSearchAutoCmds
+            \ autocmd! indexed_search_delayed
     augroup END
 endfunction

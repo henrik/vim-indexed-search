@@ -129,7 +129,7 @@ if g:indexed_search_mappings
     " For some reason, incremental maps won't work.  That is,
     "     name n nzv
     "     nmap n nzz
-    " would center the cursor (zv) but not unfold any folds (zz).
+    " would center the cursor (zz) but not unfold any folds (zv).
     " So gather up all the asked for behaviors and do them in a single map.
     let suffix = ""
     if g:indexed_search_unfold | let suffix .= "zv" | endif
