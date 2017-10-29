@@ -101,6 +101,37 @@ noremap <silent> <Plug>(indexed-search-n)  n:ShowSearchIndex<CR>
 noremap <silent> <Plug>(indexed-search-N)  N:ShowSearchIndex<CR>
 
 
+" These are internal mappings used by g:indexed_search_dont_move
+noremap        <Plug>(indexed-search-prev-pos) N
+noremap <expr> <Plug>(indexed-search-prev-view) <SID>prev_view()
+
+function! s:prev_view()
+     let sdiff = winline() - s:save_line
+     if sdiff > 0
+         return sdiff."\<C-e>"
+     elseif sdiff < 0
+         return -sdiff."\<C-y>"
+     endif
+     return ''
+endfunction
+
+
+function! s:should_unfold()
+    return has('folding') && &fdo =~ 'search\|all'
+endfunction
+
+function! s:star_search(direction)
+    let seq = "\<Plug>(indexed-search-".a:direction.")"
+    if g:indexed_search_dont_move
+        let s:save_line = winline()
+        let seq .= "\<Plug>(indexed-search-prev-pos)"
+        let seq .= "\<Plug>(indexed-search-prev-view)"
+    elseif s:should_unfold()
+        let seq .= 'zv'
+    endif
+    return seq
+endfunction
+
 function! s:next_result(direction)
     let direction = a:direction
     if g:indexed_search_n_always_searches_forward && !v:searchforward
@@ -108,7 +139,7 @@ function! s:next_result(direction)
     endif
 
     return "\<Plug>(indexed-search-".direction.")"
-                \ .(has('folding') && &fdo =~ 'search\|all' ? 'zv' : '')
+                \ .(s:should_unfold() ? 'zv' : '')
                 \ .(g:indexed_search_center ? 'zz' : '')
 endfunction
 
@@ -117,16 +148,8 @@ if g:indexed_search_mappings
     nmap / <Plug>(indexed-search-/)
     nmap ? <Plug>(indexed-search-?)
 
-    if g:indexed_search_dont_move
-        " These can't be implemented using the <Plug> mappings because the
-        " 'N' needs to happen after the '*' (or '#') and before the
-        " :ShowSearchIndex
-        nnoremap <silent>* *N:ShowSearchIndex<CR>
-        nnoremap <silent># #N:ShowSearchIndex<CR>
-    else
-        nmap * <Plug>(indexed-search-*)
-        nmap # <Plug>(indexed-search-#)
-    endif
+    nmap <expr> * <SID>star_search('*')
+    nmap <expr> # <SID>star_search('#')
 
     nmap <expr> n <SID>next_result('n')
     nmap <expr> N <SID>next_result('N')
