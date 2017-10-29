@@ -76,10 +76,6 @@ if !exists('g:indexed_search_dont_move')
     let g:indexed_search_dont_move = 0
 endif
 
-if !exists('g:indexed_search_unfold')
-    let g:indexed_search_unfold = 1
-endif
-
 if !exists('g:indexed_search_center')
     let g:indexed_search_center = 0
 endif
@@ -132,7 +128,7 @@ if g:indexed_search_mappings
     " would center the cursor (zz) but not unfold any folds (zv).
     " So gather up all the asked for behaviors and do them in a single map.
     let suffix = ""
-    if g:indexed_search_unfold | let suffix .= "zv" | endif
+    if has('folding') && &fdo =~ 'search\|all' | let suffix .= 'zv' | endif
     if g:indexed_search_center | let suffix .= "zz" | endif
     execute "nmap n <Plug>(indexed-search-n)" . suffix
     execute "nmap N <Plug>(indexed-search-N)" . suffix

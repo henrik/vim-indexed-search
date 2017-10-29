@@ -41,13 +41,6 @@ g:indexed_search_dont_move
                 cursor.  Basically, *N (or #N).
                 Default: 0
 
-                                                *g:indexed_search_unfold*
-g:indexed_search_unfold
-                If 1, the mappings for n and N open the least amount of folds
-                needed to show the match.  This is the behavior that vim's n
-                and N have, so it's enabled by default.  Basically, nzv (or Nzv).
-                Default: 1
-
                                                 *g:indexed_search_center*
 g:indexed_search_center
                 If 1, the mappings for n and N also center the cursor on the
