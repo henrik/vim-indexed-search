@@ -97,14 +97,20 @@ noremap <Plug>(indexed-search-?)  :ShowSearchIndex<CR>?
 noremap <silent> <Plug>(indexed-search-*)  *:ShowSearchIndex<CR>
 noremap <silent> <Plug>(indexed-search-#)  #:ShowSearchIndex<CR>
 
-if g:indexed_search_n_always_searches_forward
-    noremap <silent><expr> <Plug>(indexed-search-n) 'Nn'[v:searchforward] . ':ShowSearchIndex<CR>'
-    noremap <silent><expr> <Plug>(indexed-search-N) 'nN'[v:searchforward] . ':ShowSearchIndex<CR>'
-else
-    noremap <silent> <Plug>(indexed-search-n)  n:ShowSearchIndex<CR>
-    noremap <silent> <Plug>(indexed-search-N)  N:ShowSearchIndex<CR>
-end
+noremap <silent> <Plug>(indexed-search-n)  n:ShowSearchIndex<CR>
+noremap <silent> <Plug>(indexed-search-N)  N:ShowSearchIndex<CR>
 
+
+function! s:next_result(direction)
+    let direction = a:direction
+    if g:indexed_search_n_always_searches_forward && !v:searchforward
+        let direction = 'nN'[direction == 'n']
+    endif
+
+    return "\<Plug>(indexed-search-".direction.")"
+                \ .(has('folding') && &fdo =~ 'search\|all' ? 'zv' : '')
+                \ .(g:indexed_search_center ? 'zz' : '')
+endfunction
 
 
 if g:indexed_search_mappings
@@ -122,16 +128,8 @@ if g:indexed_search_mappings
         nmap # <Plug>(indexed-search-#)
     endif
 
-    " For some reason, incremental maps won't work.  That is,
-    "     name n nzv
-    "     nmap n nzz
-    " would center the cursor (zz) but not unfold any folds (zv).
-    " So gather up all the asked for behaviors and do them in a single map.
-    let suffix = ""
-    if has('folding') && &fdo =~ 'search\|all' | let suffix .= 'zv' | endif
-    if g:indexed_search_center | let suffix .= "zz" | endif
-    execute "nmap n <Plug>(indexed-search-n)" . suffix
-    execute "nmap N <Plug>(indexed-search-N)" . suffix
+    nmap <expr> n <SID>next_result('n')
+    nmap <expr> N <SID>next_result('N')
 endif
 
 
