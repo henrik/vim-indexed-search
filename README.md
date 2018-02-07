@@ -19,4 +19,4 @@ There are no new commands and no new behavior to learn.
 Just watch the bottom line when you do /,?,n,N,*,#. 
 ```
 
-[See full help file.](https://github.com/henrik/vim-indexed-search/blob/master/doc/indexedsearch.txt)
+[See full help file.](https://github.com/henrik/vim-indexed-search/blob/master/doc/indexed-search.txt)
