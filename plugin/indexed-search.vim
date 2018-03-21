@@ -1,7 +1,6 @@
-" File:         IndexedSearch.vim
 " Author:       Yakov Lerner <iler.ml@gmail.com>
 " URL:          http://www.vim.org/scripts/script.php?script_id=1682
-" Last change:  2017-10-22
+" Last change:  2018-03-21
 
 " This script redefines 6 search commands (/,?,n,N,*,#). At each search, it
 " shows at which match number you are, and the total number of matches, like
@@ -67,6 +66,10 @@ if !exists('g:indexed_search_numbered_only')
     let g:indexed_search_numbered_only = 0
 endif
 
+if !exists('g:indexed_search_line_info')
+    let g:indexed_search_line_info = 0
+endif
+
 " Mappings
 if !exists('g:indexed_search_mappings')
     let g:indexed_search_mappings = 1
@@ -80,79 +83,70 @@ if !exists('g:indexed_search_center')
     let g:indexed_search_center = 0
 endif
 
-if !exists('g:indexed_search_line_info')
-  let g:indexed_search_line_info = 0
-endif
-
 if !exists('g:indexed_search_n_always_searches_forward')
-  let g:indexed_search_n_always_searches_forward = 1
+    let g:indexed_search_n_always_searches_forward = 1
 endif
 
 
 command! -bang ShowSearchIndex :call indexed_search#show_index(<bang>0)
-
-noremap <Plug>(indexed-search-/)  :ShowSearchIndex<CR>/
-noremap <Plug>(indexed-search-?)  :ShowSearchIndex<CR>?
-
-noremap <silent> <Plug>(indexed-search-*)  *:ShowSearchIndex<CR>
-noremap <silent> <Plug>(indexed-search-#)  #:ShowSearchIndex<CR>
-
-noremap <silent> <Plug>(indexed-search-n)  n:ShowSearchIndex<CR>
-noremap <silent> <Plug>(indexed-search-N)  N:ShowSearchIndex<CR>
-
-
-" These are internal mappings used by g:indexed_search_dont_move
-noremap        <Plug>(indexed-search-prev-pos) N
-noremap <expr> <Plug>(indexed-search-prev-view) <SID>prev_view()
-
-function! s:prev_view()
-     let sdiff = winline() - s:save_line
-     if sdiff > 0
-         return sdiff."\<C-e>"
-     elseif sdiff < 0
-         return -sdiff."\<C-y>"
-     endif
-     return ''
-endfunction
 
 
 function! s:should_unfold()
     return has('folding') && &fdo =~ 'search\|all'
 endfunction
 
-function! s:star_search(direction)
-    let seq = "\<Plug>(indexed-search-".a:direction.")"
-    if g:indexed_search_dont_move
-        let s:save_line = winline()
-        let seq .= "\<Plug>(indexed-search-prev-pos)"
-        let seq .= "\<Plug>(indexed-search-prev-view)"
-    elseif s:should_unfold()
-        let seq .= 'zv'
-    endif
-    return seq
+function! s:has_map(name)
+    return !empty(maparg(a:name, mode()))
 endfunction
 
-function! s:next_result(direction)
-    let direction = a:direction
-    if g:indexed_search_n_always_searches_forward && !v:searchforward
-        let direction = 'nN'[direction == 'n']
-    endif
+function! s:restview()
+    call winrestview(s:winview)
+endfunction
 
-    return "\<Plug>(indexed-search-".direction.")"
-                \ .(s:should_unfold() ? 'zv' : '')
+function! s:wrap(seq)
+    if mode() ==# 'c' && stridx('/?', getcmdtype()) < 0
+        return a:seq
+    endif
+    return a:seq .(s:should_unfold() ? 'zv' : '')
                 \ .(g:indexed_search_center ? 'zz' : '')
+                \ .(s:has_map('<Plug>(indexed-search-custom)') ? "\<Plug>(indexed-search-custom)" : '')
+                \ ."\<Plug>(indexed-search-index)"
+endfunction
+
+function! s:star(seq)
+    if g:indexed_search_dont_move
+        let s:winview = winsaveview()
+        return a:seq . "\<Plug>(indexed-search-restview)"
+    endif
+    return a:seq
+endfunction
+
+function! s:n(seq)
+    if g:indexed_search_n_always_searches_forward && !v:searchforward
+        return ["\<Plug>(indexed-search-n)", "\<Plug>(indexed-search-N)"][a:seq ==# 'n']
+    endif
+    return a:seq
 endfunction
 
 
 if g:indexed_search_mappings
-    nmap / <Plug>(indexed-search-/)
-    nmap ? <Plug>(indexed-search-?)
+    noremap  <Plug>(indexed-search-index)  :ShowSearchIndex<CR>
 
-    nmap <expr> * <SID>star_search('*')
-    nmap <expr> # <SID>star_search('#')
+    noremap  <Plug>(indexed-search-n)  n
+    noremap  <Plug>(indexed-search-N)  N
 
-    nmap <expr> n <SID>next_result('n')
-    nmap <expr> N <SID>next_result('N')
+    noremap  <Plug>(indexed-search-restview)  :call <SID>restview()<CR>
+    inoremap <Plug>(indexed-search-restview)  <nop>
+
+    cmap <expr> <CR> <SID>wrap("\<CR>")
+    map  <expr> gd   <SID>wrap('gd')
+    map  <expr> gD   <SID>wrap('gD')
+    map  <expr> *    <SID>wrap(<SID>star('*'))
+    map  <expr> #    <SID>wrap(<SID>star('#'))
+    map  <expr> g*   <SID>wrap(<SID>star('g*'))
+    map  <expr> g#   <SID>wrap(<SID>star('g#'))
+    map  <expr> n    <SID>wrap(<SID>n('n'))
+    map  <expr> N    <SID>wrap(<SID>n('N'))
 endif
 
 

@@ -78,7 +78,8 @@ function! s:index_message(index, total, is_on_match, first_match_lnum, last_matc
     return [hl, msg.'  /'.@/.'/']
 endfunction
 
-function! s:echo_index(force)
+
+function! indexed_search#show_index(force)
     if @/ == '' || (!a:force && line('$') >= g:indexed_search_max_lines)
         return
     endif
@@ -86,23 +87,4 @@ function! s:echo_index(force)
     let results = s:search(a:force)
     let [hl, msg] = call('s:index_message', results + [a:force])
     call s:echohl(g:indexed_search_colors ? hl : 'None', msg)
-endfunction
-
-
-function! indexed_search#show_index(force)
-    if exists('s:save_ut') | return | endif
-    let s:save_ut = &ut
-
-    " autocmds run in the context of the script.  So this function's arguments
-    " aren't in scope, we need to use script variables.
-    let s:force = a:force
-
-    let &ut = 200
-    augroup indexed_search_delayed
-        autocmd CursorHold *
-            \ let &ut = s:save_ut         |
-            \ unlet s:save_ut             |
-            \ call s:echo_index(s:force)  |
-            \ autocmd! indexed_search_delayed
-    augroup END
 endfunction
