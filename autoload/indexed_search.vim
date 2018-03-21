@@ -22,9 +22,11 @@ function! s:old_search(force)
         endif
         let [matchline, matchcol] = searchpos(@/, 'W')
     endwhile
+    let out_of_time = (!a:force && total > g:indexed_search_max_hits)
+                \ + (!a:force && index > g:indexed_search_max_hits)
 
     call winrestview(winview)
-    return [index, total, is_on_match, first_match_lnum, last_match_lnum]
+    return [index, total, is_on_match, out_of_time, first_match_lnum, last_match_lnum]
 endfunction
 
 function! s:search(force)
@@ -80,7 +82,7 @@ function! s:search(force)
     " other than counting them one-by-one.  While this wastes some searches as
     " a whole it ends up being far faster than doing it all one-by-one.
     try
-        while 1
+        while before <= g:indexed_search_max_hits || a:force
             " if reltimefloat(reltime(now)) > 0.1 | break | endif
             try
                 silent keepjumps normal! 10N
@@ -96,7 +98,7 @@ function! s:search(force)
             endtry
         endwhile
         call winrestview(winview)
-        while 1
+        while before + after <= g:indexed_search_max_hits || a:force
             " if reltimefloat(reltime(now)) > 0.1 | break | endif
             try
                 silent keepjumps normal! 10n
@@ -120,19 +122,22 @@ function! s:search(force)
         let [first_match_lnum, last_match_lnum] = [last_match_lnum, first_match_lnum]
     end
 
+    let out_of_time = (!a:force && before > g:indexed_search_max_hits)
+                \ + (!a:force && after + before > g:indexed_search_max_hits)
+
     let index = before + is_on_match
     let total = before + after + is_on_match
-    return [index, total, is_on_match, first_match_lnum, last_match_lnum]
+    return [index, total, is_on_match, out_of_time, first_match_lnum, last_match_lnum]
 endfunction
 
-function! s:index_message(index, total, is_on_match, first_match_lnum, last_match_lnum, force)
+function! s:index_message(index, total, is_on_match, out_of_time, first_match_lnum, last_match_lnum)
     let hl = 'Directory'
     let msg = ''
 
     let matches = a:total
-    if !a:force && a:total > g:indexed_search_max_hits
-        let matches = '> '. g:indexed_search_max_hits
-        if !a:is_on_match
+    if a:out_of_time
+        let matches = '> '. a:total
+        if !a:is_on_match || a:out_of_time > 1
             return [hl, matches .' matches']
         endif
     endif
@@ -183,6 +188,6 @@ function! indexed_search#show_index(force)
     endif
 
     let results = s:search(a:force)
-    let [hl, msg] = call('s:index_message', results + [a:force])
+    let [hl, msg] = call('s:index_message', results)
     call s:echohl(g:indexed_search_colors ? hl : 'None', msg)
 endfunction
