@@ -4,7 +4,7 @@ function! s:echohl(hl, msg)
     echohl None
 endfunction
 
-function! s:search(force)
+function! s:old_search(force)
     let winview = winsaveview()
     let line = winview["lnum"]
     let col = winview["col"] + 1
@@ -24,6 +24,104 @@ function! s:search(force)
     endwhile
 
     call winrestview(winview)
+    return [index, total, is_on_match, first_match_lnum, last_match_lnum]
+endfunction
+
+function! s:search(force)
+    let [before, after, is_on_match, first_match_lnum, last_match_lnum] = [0, 0, 1, 0, 0]
+
+    let now = reltime()
+    let winview = winsaveview()
+    let [save_ws, save_fen] = [&wrapscan, &foldenable]
+    set nowrapscan nofoldenable
+
+    " If we're at the last line and the file contains no EOL there,
+    " `line2byte()` seems (to me) to give a wrong result.
+    let eolbug = line('.') == line('$') && !&eol && (&bin || !&fixeol)
+
+    " We need to find out whether the cursor is currently on a match or not
+    " since that'll affect our numbering.  Naturally, there's no easy way to
+    " get such information.  The hard way is to wiggle the cursor a bit and
+    " try to search back and check if we ended up where we started.  There are
+    " two edge cases though.
+    let curpos = getpos('.')
+    if line2byte(line('$') + 1) <= 3
+        " The buffer is empty or has only one character.
+        " In this case, we can't wiggle the cursor, so we just search and
+        " check for the 'E486 Pattern not found' error.
+        set wrapscan
+        try
+            silent keepjumps normal! n
+        catch /^Vim[^)]\+):E486\D/
+            let is_on_match = 0
+        endtry
+        set nowrapscan
+    elseif line2byte('.') + col('.') - 1 <= 1
+        " We're at the very start of the buffer.
+        " We move the cursor forwards.
+        silent! keepjumps goto 2
+        silent! exec 'keepjumps normal!' (v:searchforward ? 'N' : 'n')
+    else
+        " In every other case, we move the cursor backwards.  This works even
+        " if we're at the very edge of the buffer which is nice because I
+        " couldn't find any surefire way to check for that.
+        silent! exec 'keepjumps goto' (line2byte('.') + col('.') - (eolbug ? 0 : 2))
+        silent! exec 'keepjumps normal!' (v:searchforward ? 'n' : 'N')
+    endif
+    if getpos('.') != curpos | let is_on_match = 0 | endif
+    call winrestview(winview)
+
+    " This is the algorithm itself; we first count all the matches before the
+    " cursor and then all the ones after it.  To count these, we first try
+    " moving in tens; running '10n' is (mostly) the same as running 'n' 10
+    " times but it's faster since it runs in C.  If however there are only,
+    " say, 9 matches, Vim will internally run 'n' 9 times before announcing
+    " that the 10th found no match but with no way to see how many matched;
+    " other than counting them one-by-one.  While this wastes some searches as
+    " a whole it ends up being far faster than doing it all one-by-one.
+    try
+        while 1
+            " if reltimefloat(reltime(now)) > 0.1 | break | endif
+            try
+                silent keepjumps normal! 10N
+                let before += 10
+            catch /^Vim[^)]\+):E38[45]\D/
+                try
+                    silent keepjumps normal! N
+                    let before += 1
+                catch /^Vim[^)]\+):E38[45]\D/
+                    let first_match_lnum = line('.')
+                    break
+                endtry
+            endtry
+        endwhile
+        call winrestview(winview)
+        while 1
+            " if reltimefloat(reltime(now)) > 0.1 | break | endif
+            try
+                silent keepjumps normal! 10n
+                let after += 10
+            catch /^Vim[^)]\+):E38[45]\D/
+                try
+                    silent keepjumps normal! n
+                    let after += 1
+                catch /^Vim[^)]\+):E38[45]\D/
+                    let last_match_lnum = line('.')
+                    break
+                endtry
+            endtry
+        endwhile
+    finally
+        let [&wrapscan, &foldenable] = [save_ws, save_fen]
+        call winrestview(winview)
+    endtry
+    if !v:searchforward
+        let [after, before] = [before, after]
+        let [first_match_lnum, last_match_lnum] = [last_match_lnum, first_match_lnum]
+    end
+
+    let index = before + is_on_match
+    let total = before + after + is_on_match
     return [index, total, is_on_match, first_match_lnum, last_match_lnum]
 endfunction
 
