@@ -1,8 +1,8 @@
 # IndexedSearch.vim
 
-Majorly rewritten by [Otto Modinos](https://github.com/otommod).
+Requires vim7.4
 
-Originally by [Yakov Lerner](http://www.vim.org/account/profile.php?user_id=2342) and put on GitHub by [Henrik Nyh](https://github.com/henrik) to have it there in a [Pathogen](http://www.vim.org/scripts/script.php?script_id=2332)-friendly format.
+Originally by [Yakov Lerner](http://www.vim.org/account/profile.php?user_id=2342) and put on GitHub by [Henrik Nyh](https://github.com/henrik) to have it there in a [Pathogen](http://www.vim.org/scripts/script.php?script_id=2332)-friendly format.  Majorly rewritten by [Otto Modinos](https://github.com/otommod).
 
 [See the original plugin page at vim.org.](http://www.vim.org/scripts/script.php?script_id=1682)
 
