@@ -20,3 +20,11 @@ Just watch the bottom line when you do /,?,n,N,*,#.
 ```
 
 [See full help file.](https://github.com/henrik/vim-indexed-search/blob/master/doc/indexed-search.txt)
+
+## Alternatives
+
+Is this plugin too slow for you?  Do you want more (or less) features?  Here're some other plugins that do (or can do) the same thing:
+
+  * [google/vim-searchindex](https://github.com/google/vim-searchindex)
+  * [osyo-manga/vim-anzu](https://github.com/osyo-manga/vim-anzu)
+  * [romainl/vim-cool](https://github.com/romainl/vim-cool)
