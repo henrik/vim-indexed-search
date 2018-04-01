@@ -131,6 +131,7 @@ endfunction
 
 if g:indexed_search_mappings
     noremap  <Plug>(indexed-search-index)  :ShowSearchIndex<CR>
+    xnoremap <Plug>(indexed-search-index)  :<C-u>ShowSearchIndex<CR>gv
 
     noremap  <Plug>(indexed-search-n)  n
     noremap  <Plug>(indexed-search-N)  N
