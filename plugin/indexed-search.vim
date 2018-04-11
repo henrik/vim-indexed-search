@@ -95,22 +95,12 @@ function! s:should_unfold()
     return has('folding') && &fdo =~ 'search\|all'
 endfunction
 
-function! s:has_map(name)
+function! s:has_mapping(name)
     return !empty(maparg(a:name, mode()))
 endfunction
 
 function! s:restview()
     call winrestview(s:winview)
-endfunction
-
-function! s:wrap(seq)
-    if mode() ==# 'c' && stridx('/?', getcmdtype()) < 0
-        return a:seq
-    endif
-    return a:seq .(s:should_unfold() ? 'zv' : '')
-                \ .(g:indexed_search_center ? 'zz' : '')
-                \ .(s:has_map('<Plug>(indexed-search-custom)') ? "\<Plug>(indexed-search-custom)" : '')
-                \ ."\<Plug>(indexed-search-index)"
 endfunction
 
 function! s:star(seq)
@@ -128,63 +118,40 @@ function! s:n(seq)
     return a:seq
 endfunction
 
+function! s:after()
+    return (s:should_unfold() ? 'zv' : '')
+                \ .(g:indexed_search_center ? 'zz' : '')
+                \ .(s:has_mapping('<Plug>(indexed-search-custom)') ? "\<Plug>(indexed-search-custom)" : '')
+                \ ."\<Plug>(indexed-search-index)"
+endfunction
+
 
 if g:indexed_search_mappings
-    noremap  <Plug>(indexed-search-index)  :ShowSearchIndex<CR>
+    noremap  <Plug>(indexed-search-index)  <Nop>
+    nnoremap <Plug>(indexed-search-index)  :ShowSearchIndex<CR>
     xnoremap <Plug>(indexed-search-index)  :<C-u>ShowSearchIndex<CR>gv
 
     noremap  <Plug>(indexed-search-n)  n
     noremap  <Plug>(indexed-search-N)  N
 
     noremap  <Plug>(indexed-search-restview)  :call <SID>restview()<CR>
-    inoremap <Plug>(indexed-search-restview)  <nop>
 
-    cmap <expr> <CR> <SID>wrap("\<CR>")
-    map  <expr> gd   <SID>wrap('gd')
-    map  <expr> gD   <SID>wrap('gD')
-    map  <expr> *    <SID>wrap(<SID>star('*'))
-    map  <expr> #    <SID>wrap(<SID>star('#'))
-    map  <expr> g*   <SID>wrap(<SID>star('g*'))
-    map  <expr> g#   <SID>wrap(<SID>star('g#'))
-    map  <expr> n    <SID>wrap(<SID>n('n'))
-    map  <expr> N    <SID>wrap(<SID>n('N'))
+    map  <expr> <Plug>(indexed-search-after)  <SID>after()
+    imap        <Plug>(indexed-search-after)  <Nop>
+
+    cmap <expr> <CR> "\<CR>" . (getcmdtype() =~ '[/?]' ? "\<Plug>(indexed-search-after)" : '')
+    " map  <expr> gd   'gd'    . "\<Plug>(indexed-search-after)"
+    " map  <expr> gD   'gD'    . "\<Plug>(indexed-search-after)"
+    map  <expr> *    <SID>star('*')  . "\<Plug>(indexed-search-after)"
+    map  <expr> #    <SID>star('#')  . "\<Plug>(indexed-search-after)"
+    map  <expr> g*   <SID>star('g*') . "\<Plug>(indexed-search-after)"
+    map  <expr> g#   <SID>star('g#') . "\<Plug>(indexed-search-after)"
+    map  <expr> n    <SID>n('n')     . "\<Plug>(indexed-search-after)"
+    map  <expr> N    <SID>n('N')     . "\<Plug>(indexed-search-after)"
 endif
 
 
 let &cpo = s:save_cpo
-
-" Last changes
-" 2006-10-20 added limitation by # of matches
-" 061021 lerner fixed problem with cmap <enter> that screwed maps
-" 061021 colors added
-" 061022 fixed g/ when too many matches
-" 061106 got message to work with check for largefile right
-" 061110 addition of DelayedEcho(ScheduledEcho) fixes and simplifies things
-" 061110 mapping for nN*# greately simplifified by switching to ScheduledEcho
-" 061110 fixed problem with i<c-o>/pat<cr> and c/PATTERN<CR> Markus Braun
-" 061110 fixed bug in / and ?, Counting moved to Delayd
-" 061110 fixed bug extra line+enter prompt in [/?] by addinf redraw
-" 061110 fixed overwriting builtin errmsg with ">1000 matches"
-" 061111 fixed bug with gg & 'set nosol' (gg->gg0)
-" 061113 fixed mysterious eschewing of @/ wfte *,#
-" 061113 fixed counting of match at the very beginning of file
-" 061113 added msgs "Before single match", "After single match"
-" 061113 fixed bug with &ut not always restored. This could happen if
-"        ScheduleEcho() was called twice in a row.
-" 061114 fixed problem with **#n. Direction of the last n is incorrect (must be backward
-"              but was incorrectly forward)
-" 061114 fixed disappearrance of "Hit BOTTOM" native msg when file<max and numhits>max
-" 061116 changed hlgroup os "At last match" from DiffChange to LineNr. Looks more natural.
-" 061120 shortened text messages.
-" 061120 made to work on vim6
-" 061120 bugfix for vim6 (virtcol() not col())
-" 061120 another bug with virtcol() vs col()
-" 061120 fixed [/?] on vim6 (vim6 doesn't have getcmdtype())
-" 061121 fixed mapping in <cr> with supertab.vim. Switched to [/?] mapping, removed <cr> mapping.
-"        also shortened code considerably, made vim6 and vim7 work same way, removed need
-"        for getcmdtype().
-" 061121 fixed handling of g:indexed_search_colors (Markus Braun)
-
 
 " Wishlist
 " -  using high-precision timer of vim7, count number of millisec
