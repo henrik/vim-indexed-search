@@ -135,6 +135,7 @@ if g:indexed_search_mappings
     noremap  <Plug>(indexed-search-N)  N
 
     noremap  <Plug>(indexed-search-restview)  :call <SID>restview()<CR>
+    xnoremap <Plug>(indexed-search-restview)  :<C-u>call <SID>restview()<CR>gv
 
     map  <expr> <Plug>(indexed-search-after)  <SID>after()
     imap        <Plug>(indexed-search-after)  <Nop>
