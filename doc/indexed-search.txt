@@ -87,7 +87,7 @@ g:indexed_search_n_always_searches_forward
                 whether / or ? was used for searching forward or backward
                 respectively.
                 If 1, n always search forward and N backward
-                Default: 1
+                Default: 0
 
 =============================================================================
 MAPPINGS                                        *indexed-search-mappings*

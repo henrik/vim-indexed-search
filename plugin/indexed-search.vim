@@ -84,7 +84,7 @@ if !exists('g:indexed_search_center')
 endif
 
 if !exists('g:indexed_search_n_always_searches_forward')
-    let g:indexed_search_n_always_searches_forward = 1
+    let g:indexed_search_n_always_searches_forward = 0
 endif
 
 
