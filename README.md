@@ -25,7 +25,9 @@ Just watch the bottom line when you do /,?,n,N,*,#.
 
 Is this plugin too slow for you?  Do you want more (or less) features?  Here're some other plugins that do (or can do) the same thing:
 
+  * On Vim 8.1.1270+, you can use [`:set shortmess-=S`](https://stackoverflow.com/a/4671112/6962)
   * [google/vim-searchindex](https://github.com/google/vim-searchindex); very fast and unobtrusive
   * [osyo-manga/vim-anzu](https://github.com/osyo-manga/vim-anzu); tons of features
   * [romainl/vim-cool](https://github.com/romainl/vim-cool); initally just for disabling the highlighting of matches after a seach, now also show an index
   * [lacygoill/vim-search](https://github.com/lacygoill/vim-search); meant for [personal use](https://github.com/junegunn/vim-slash/issues/7) but can be used by everyone
+
